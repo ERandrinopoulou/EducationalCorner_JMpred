@@ -1,0 +1,9 @@
+name: "EducationalCorner_JMpred"
+output_dir: "."
+navbar:
+  title: "EducationalCorner_JMpred"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Data"
+      href: about.html

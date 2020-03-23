@@ -1,0 +1,5 @@
+---
+title: "Data"
+---
+
+The pbc2 data is used from the JMbayes package 
