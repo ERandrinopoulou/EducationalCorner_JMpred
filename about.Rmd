@@ -3,3 +3,8 @@ title: "Data"
 ---
 
 The pbc2 data is used from the JMbayes package 
+
+```{r, message=FALSE, warning=FALSE}
+library(JMbayes)
+summary(pbc2)
+```

@@ -1,5 +1,5 @@
 ---
-title: "Dynamic prediction using joint models oflongitudinal and time-to-event data"
+title: "Dynamic prediction using joint models of longitudinal and time-to-event data"
 ---
 
 In this webpage, we describe the steps that someone needs to follow in order to obtain dynamic prediction using a joint model of longitudinal and survival data.
