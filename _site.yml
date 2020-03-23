@@ -4,6 +4,6 @@ navbar:
   title: "EducationalCorner_JMpred"
   left:
     - text: "Home"
-      href: index.html
+      href: webpage.html
     - text: "Data"
       href: about.html
