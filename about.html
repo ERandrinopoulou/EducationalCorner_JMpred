@@ -329,6 +329,29 @@ summary(pbc2)</code></pre>
 ##  3rd Qu.:4.000   3rd Qu.:1.0000  
 ##  Max.   :4.000   Max.   :1.0000  
 ## </code></pre>
+<pre class="r"><code>library(lattice)
+
+p1 &lt;- xyplot(serBilir ~ year, groups = id, data = pbc2[pbc2$status %in% c(&quot;dead&quot;, &quot;transplanted&quot;), ], col = &quot;grey&quot;, lwd = 1, type = &quot;l&quot;,
+       ylab = list(label = &quot;Serum Bilirubin&quot;, cex = 1.2), ylim=c(0, 41), xlim = c(0, 12.5),
+       xlab = list(label = &quot;Years&quot;, cex = 1.2),
+       main = list(label = &quot;Dead or transplanted patients&quot;, cex = 1.04),
+       panel = function(x, y,...) {
+         panel.xyplot(x, y, ...)
+         panel.xyplot(pbc2$year[pbc2$status %in% c(&quot;dead&quot;, &quot;transplanted&quot;)], pbc2$serBilir[pbc2$status %in% c(&quot;dead&quot;, &quot;transplanted&quot;)], col = 1, lwd = 5, type = &quot;smooth&quot;)
+       })
+
+p2 &lt;- xyplot(serBilir ~ year, groups = id, data = pbc2[pbc2$status %in% c(&quot;alive&quot;), ], col = &quot;grey&quot;, lwd = 1, type = &quot;l&quot;,
+       ylab = list(label = &quot;Serum Bilirubin&quot;, cex = 1.2), ylim=c(0, 41), xlim = c(0, 12.5),
+       xlab = list(label = &quot;Years&quot;, cex = 1.2),
+       main = list(label = &quot;Alive patients&quot;, cex = 1.04),
+       panel = function(x, y,...) {
+         panel.xyplot(x, y, ...)
+         panel.xyplot(pbc2$year[pbc2$status %in% c(&quot;alive&quot;)], pbc2$serBilir[pbc2$status %in% c(&quot;alive&quot;)], col = 1, lwd = 5, type = &quot;smooth&quot;)
+       })
+
+print(p1, split = c(1, 1, 2, 1), more = TRUE)
+print(p2, split = c(2, 1, 2, 1))</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 
 
 
