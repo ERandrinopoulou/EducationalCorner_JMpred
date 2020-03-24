@@ -1,33 +1,51 @@
 ---
 title: "Data"
+output: 
+   html_document:
+     toc: true
+     toc_float:
+       collapsed: false
 ---
 
-The pbc2 data is used from the JMbayes package 
+The pbc2 data is used from the JMbayes package. 
 
-```{r, message=FALSE, warning=FALSE}
-library(JMbayes)
-summary(pbc2)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA, message=FALSE, warning=FALSE)
 ```
 
-```{r, message=FALSE, warning=FALSE}
+# Packages 
+```{r packages}
+library(JMbayes)
 library(lattice)
+```
 
-p1 <- xyplot(serBilir ~ year, groups = id, data = pbc2[pbc2$status %in% c("dead", "transplanted"), ], col = "grey", lwd = 1, type = "l",
-       ylab = list(label = "Serum Bilirubin", cex = 1.2), ylim=c(0, 41), xlim = c(0, 12.5),
-       xlab = list(label = "Years", cex = 1.2),
-       main = list(label = "Dead or transplanted patients", cex = 1.04),
-       panel = function(x, y,...) {
-         panel.xyplot(x, y, ...)
-         panel.xyplot(pbc2$year[pbc2$status %in% c("dead", "transplanted")], pbc2$serBilir[pbc2$status %in% c("dead", "transplanted")], col = 1, lwd = 5, type = "smooth")
+# Descriptive plots
+
+```{r, message=FALSE, warning=FALSE}
+p1 <- xyplot(serBilir ~ year, groups = id, 
+             data = pbc2[pbc2$status %in% c("dead", "transplanted"), ], 
+             col = "grey", lwd = 1, type = "l",
+             ylab = list(label = "Serum Bilirubin", cex = 1.2), ylim=c(0, 41), xlim = c(0, 12.5),
+             xlab = list(label = "Years", cex = 1.2),
+             main = list(label = "Dead or transplanted patients", cex = 1.04),
+             panel = function(x, y,...) {
+                 panel.xyplot(x, y, ...)
+                 panel.xyplot(pbc2$year[pbc2$status %in% c("dead", "transplanted")], 
+                              pbc2$serBilir[pbc2$status %in% c("dead", "transplanted")], 
+                              col = 1, lwd = 5, type = "smooth")
        })
 
-p2 <- xyplot(serBilir ~ year, groups = id, data = pbc2[pbc2$status %in% c("alive"), ], col = "grey", lwd = 1, type = "l",
-       ylab = list(label = "Serum Bilirubin", cex = 1.2), ylim=c(0, 41), xlim = c(0, 12.5),
-       xlab = list(label = "Years", cex = 1.2),
-       main = list(label = "Alive patients", cex = 1.04),
-       panel = function(x, y,...) {
-         panel.xyplot(x, y, ...)
-         panel.xyplot(pbc2$year[pbc2$status %in% c("alive")], pbc2$serBilir[pbc2$status %in% c("alive")], col = 1, lwd = 5, type = "smooth")
+p2 <- xyplot(serBilir ~ year, groups = id, 
+             data = pbc2[pbc2$status %in% c("alive"), ], 
+             col = "grey", lwd = 1, type = "l",
+             ylab = list(label = "Serum Bilirubin", cex = 1.2), ylim=c(0, 41), xlim = c(0, 12.5),
+             xlab = list(label = "Years", cex = 1.2),
+             main = list(label = "Alive patients", cex = 1.04),
+             panel = function(x, y,...) {
+                 panel.xyplot(x, y, ...)
+                 panel.xyplot(pbc2$year[pbc2$status %in% c("alive")], 
+                              pbc2$serBilir[pbc2$status %in% c("alive")], 
+                              col = 1, lwd = 5, type = "smooth")
        })
 
 print(p1, split = c(1, 1, 2, 1), more = TRUE)

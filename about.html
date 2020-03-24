@@ -19,6 +19,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -248,6 +251,75 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
 
 </head>
 
@@ -255,6 +327,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -294,67 +376,49 @@ $(document).ready(function () {
 </div>
 
 
-<p>The pbc2 data is used from the JMbayes package</p>
+<p>The pbc2 data is used from the JMbayes package.</p>
+<div id="packages" class="section level1">
+<h1>Packages</h1>
 <pre class="r"><code>library(JMbayes)
-summary(pbc2)</code></pre>
-<pre><code>##        id           years                  status            drug          age            sex      
-##  32     :  16   Min.   : 0.1123   alive       :1073   placebo  :967   Min.   :26.28   male  : 237  
-##  42     :  16   1st Qu.: 5.6264   transplanted: 147   D-penicil:978   1st Qu.:41.79   female:1708  
-##  58     :  16   Median : 8.1125   dead        : 725                   Median :48.87                
-##  19     :  15   Mean   : 8.0516                                       Mean   :49.26                
-##  40     :  15   3rd Qu.:10.4561                                       3rd Qu.:56.15                
-##  43     :  15   Max.   :14.3057                                       Max.   :78.44                
-##  (Other):1852                                                                                      
-##       year         ascites     hepatomegaly spiders                         edema         serBilir     
-##  Min.   : 0.0000   No  :1716   No  :952     No  :1311   No edema               :1401   Min.   : 0.100  
-##  1st Qu.: 0.5257   Yes : 169   Yes :932     Yes : 576   edema no diuretics     : 379   1st Qu.: 0.800  
-##  Median : 2.0534   NA&#39;s:  60   NA&#39;s: 61     NA&#39;s:  58   edema despite diuretics: 165   Median : 1.400  
-##  Mean   : 3.1359                                                                       Mean   : 3.672  
-##  3rd Qu.: 5.0323                                                                       3rd Qu.: 3.900  
-##  Max.   :14.1058                                                                       Max.   :41.000  
-##                                                                                                        
-##     serChol          albumin        alkaline          SGOT          platelets      prothrombin  
-##  Min.   :  55.0   Min.   :1.17   Min.   :   73   Min.   :   6.2   Min.   : 40.0   Min.   : 9.0  
-##  1st Qu.: 235.0   1st Qu.:3.11   1st Qu.:  737   1st Qu.:  72.0   1st Qu.:165.0   1st Qu.:10.1  
-##  Median : 281.0   Median :3.44   Median : 1072   Median : 107.0   Median :228.0   Median :10.8  
-##  Mean   : 320.5   Mean   :3.39   Mean   : 1382   Mean   : 122.7   Mean   :233.7   Mean   :11.0  
-##  3rd Qu.: 349.2   3rd Qu.:3.70   3rd Qu.: 1636   3rd Qu.: 155.0   3rd Qu.:290.2   3rd Qu.:11.5  
-##  Max.   :1775.0   Max.   :8.01   Max.   :13862   Max.   :1205.0   Max.   :991.0   Max.   :36.0  
-##  NA&#39;s   :821                     NA&#39;s   :60                       NA&#39;s   :73                    
-##    histologic       status2      
-##  Min.   :1.000   Min.   :0.0000  
-##  1st Qu.:3.000   1st Qu.:0.0000  
-##  Median :3.000   Median :0.0000  
-##  Mean   :3.265   Mean   :0.3728  
-##  3rd Qu.:4.000   3rd Qu.:1.0000  
-##  Max.   :4.000   Max.   :1.0000  
-## </code></pre>
-<pre class="r"><code>library(lattice)
-
-p1 &lt;- xyplot(serBilir ~ year, groups = id, data = pbc2[pbc2$status %in% c(&quot;dead&quot;, &quot;transplanted&quot;), ], col = &quot;grey&quot;, lwd = 1, type = &quot;l&quot;,
-       ylab = list(label = &quot;Serum Bilirubin&quot;, cex = 1.2), ylim=c(0, 41), xlim = c(0, 12.5),
-       xlab = list(label = &quot;Years&quot;, cex = 1.2),
-       main = list(label = &quot;Dead or transplanted patients&quot;, cex = 1.04),
-       panel = function(x, y,...) {
-         panel.xyplot(x, y, ...)
-         panel.xyplot(pbc2$year[pbc2$status %in% c(&quot;dead&quot;, &quot;transplanted&quot;)], pbc2$serBilir[pbc2$status %in% c(&quot;dead&quot;, &quot;transplanted&quot;)], col = 1, lwd = 5, type = &quot;smooth&quot;)
+library(lattice)</code></pre>
+</div>
+<div id="descriptive-plots" class="section level1">
+<h1>Descriptive plots</h1>
+<pre class="r"><code>p1 &lt;- xyplot(serBilir ~ year, groups = id, 
+             data = pbc2[pbc2$status %in% c(&quot;dead&quot;, &quot;transplanted&quot;), ], 
+             col = &quot;grey&quot;, lwd = 1, type = &quot;l&quot;,
+             ylab = list(label = &quot;Serum Bilirubin&quot;, cex = 1.2), ylim=c(0, 41), xlim = c(0, 12.5),
+             xlab = list(label = &quot;Years&quot;, cex = 1.2),
+             main = list(label = &quot;Dead or transplanted patients&quot;, cex = 1.04),
+             panel = function(x, y,...) {
+                 panel.xyplot(x, y, ...)
+                 panel.xyplot(pbc2$year[pbc2$status %in% c(&quot;dead&quot;, &quot;transplanted&quot;)], 
+                              pbc2$serBilir[pbc2$status %in% c(&quot;dead&quot;, &quot;transplanted&quot;)], 
+                              col = 1, lwd = 5, type = &quot;smooth&quot;)
        })
 
-p2 &lt;- xyplot(serBilir ~ year, groups = id, data = pbc2[pbc2$status %in% c(&quot;alive&quot;), ], col = &quot;grey&quot;, lwd = 1, type = &quot;l&quot;,
-       ylab = list(label = &quot;Serum Bilirubin&quot;, cex = 1.2), ylim=c(0, 41), xlim = c(0, 12.5),
-       xlab = list(label = &quot;Years&quot;, cex = 1.2),
-       main = list(label = &quot;Alive patients&quot;, cex = 1.04),
-       panel = function(x, y,...) {
-         panel.xyplot(x, y, ...)
-         panel.xyplot(pbc2$year[pbc2$status %in% c(&quot;alive&quot;)], pbc2$serBilir[pbc2$status %in% c(&quot;alive&quot;)], col = 1, lwd = 5, type = &quot;smooth&quot;)
+p2 &lt;- xyplot(serBilir ~ year, groups = id, 
+             data = pbc2[pbc2$status %in% c(&quot;alive&quot;), ], 
+             col = &quot;grey&quot;, lwd = 1, type = &quot;l&quot;,
+             ylab = list(label = &quot;Serum Bilirubin&quot;, cex = 1.2), ylim=c(0, 41), xlim = c(0, 12.5),
+             xlab = list(label = &quot;Years&quot;, cex = 1.2),
+             main = list(label = &quot;Alive patients&quot;, cex = 1.04),
+             panel = function(x, y,...) {
+                 panel.xyplot(x, y, ...)
+                 panel.xyplot(pbc2$year[pbc2$status %in% c(&quot;alive&quot;)], 
+                              pbc2$serBilir[pbc2$status %in% c(&quot;alive&quot;)], 
+                              col = 1, lwd = 5, type = &quot;smooth&quot;)
        })
 
 print(p1, split = c(1, 1, 2, 1), more = TRUE)
 print(p2, split = c(2, 1, 2, 1))</code></pre>
-<p><img src="about_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><img src="about_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+</div>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -387,6 +451,32 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

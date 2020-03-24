@@ -1,6 +1,16 @@
 ---
 title: "Dynamic prediction using joint models of longitudinal and time-to-event data"
+author: "Eleni-Rosalina Andrinopoulou, Department of Biostatistics, Erasmus Medical Center"
+date: "`r Sys.setenv(LANG = 'en_US.UTF-8'); format(Sys.Date(), '%d %B %Y')`"
+output: 
+   html_document:
+     toc: true
+     toc_float:
+       collapsed: false
 ---
+
+<span style="color:red; font-weight:bold; font-size:4em;"> Under construction </span>
+
 
 In this webpage, we describe the steps that someone needs to follow in order to obtain dynamic prediction using a joint model of longitudinal and survival data.
 \
