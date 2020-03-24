@@ -32,7 +32,13 @@ column_spec(1, width = c("7em")) %>%
 column_spec(2, width = c("15em"))
 ```
 
-# Data
+\
 
+# Analysis
 We will first start by exploring the data. More details can be found in the tab **Data**.
 
+## Fit a joint model
+
+## Obtain dynamic predictions
+
+## Evaluate the predictions

@@ -1,7 +1,7 @@
 name: "EducationalCorner_JMpred"
 output_dir: "."
 navbar:
-  title: "EducationalCorner_JMpred"
+  title: "Educational Corner: JM dynamic predictions"
   left:
     - text: "Home"
       href: index.html
