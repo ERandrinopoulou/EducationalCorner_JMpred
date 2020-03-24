@@ -377,13 +377,8 @@ div.tocify {
 
 
 <p>The pbc2 data is used from the JMbayes package.</p>
-<div id="packages" class="section level1">
-<h1>Packages</h1>
-<pre class="r"><code>library(JMbayes)
-library(lattice)</code></pre>
-</div>
-<div id="descriptive-plots" class="section level1">
-<h1>Descriptive plots</h1>
+<div id="longitudinal-outcome" class="section level1">
+<h1>Longitudinal outcome</h1>
 <pre class="r"><code>p1 &lt;- xyplot(serBilir ~ year, groups = id, 
              data = pbc2[pbc2$status %in% c(&quot;dead&quot;, &quot;transplanted&quot;), ], 
              col = &quot;grey&quot;, lwd = 1, type = &quot;l&quot;,
@@ -413,6 +408,32 @@ p2 &lt;- xyplot(serBilir ~ year, groups = id,
 print(p1, split = c(1, 1, 2, 1), more = TRUE)
 print(p2, split = c(2, 1, 2, 1))</code></pre>
 <p><img src="about_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<pre class="r"><code>fit_linear &lt;- lme(serBilir ~ year, random = ~ year | id, data = pbc2)
+fit_nonlinear &lt;- lme(serBilir ~ ns(year, 3), random = list(id = pdDiag(form = ~ ns(year, 3))), data = pbc2)
+
+pbc2$fitted_linear &lt;- fitted(fit_linear)
+pbc2$fitted_nonlinear &lt;- fitted(fit_nonlinear)
+
+newdata &lt;- pbc2[pbc2$id %in% c(128, 142, 46, 57, 216, 93, 114, 120, 294), ]
+
+xyplot(serBilir ~ year | id, data = newdata, pch = 20, 
+       subscripts = TRUE, col = 1, lwd = 3, strip = FALSE, cex = 1.5,
+       ylab = list(label = &quot;Serum Bilirubin&quot;, cex = 1.2),
+       xlab = list(label = &quot;Years&quot;, cex = 1.2),
+       panel = function(x, y, subscripts = subscripts,...) {
+         panel.xyplot(x, y, subscripts = subscripts, ...)
+         panel.lines(newdata$year[subscripts], newdata$fitted_linear[subscripts], 
+                     col = &quot;red&quot;, lwd = 4, lty = 1)
+         panel.lines(newdata$year[subscripts], newdata$fitted_nonlinear[subscripts], 
+                     col = &quot;blue&quot;, lwd = 4, lty = 2)
+})</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+<div id="survival-outcome" class="section level1">
+<h1>Survival outcome</h1>
+<pre class="r"><code>fit &lt;- survfit(Surv(years, status2) ~ 1, data = pbc2.id)
+ggsurvplot(fit, data = pbc2.id, risk.table = TRUE, palette = &quot;black&quot;, legend = &quot;none&quot;)</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 </div>
 
 

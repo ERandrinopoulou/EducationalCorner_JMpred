@@ -11,17 +11,17 @@ The pbc2 data is used from the JMbayes package.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, comment = NA, message=FALSE, warning=FALSE)
-```
-
-# Packages 
-```{r packages}
 library(JMbayes)
 library(lattice)
+library(splines)
+library(survminer)
 ```
 
-# Descriptive plots
 
-```{r, message=FALSE, warning=FALSE}
+
+# Longitudinal outcome
+
+```{r}
 p1 <- xyplot(serBilir ~ year, groups = id, 
              data = pbc2[pbc2$status %in% c("dead", "transplanted"), ], 
              col = "grey", lwd = 1, type = "l",
@@ -51,3 +51,34 @@ p2 <- xyplot(serBilir ~ year, groups = id,
 print(p1, split = c(1, 1, 2, 1), more = TRUE)
 print(p2, split = c(2, 1, 2, 1))
 ```
+
+
+```{r}
+fit_linear <- lme(serBilir ~ year, random = ~ year | id, data = pbc2)
+fit_nonlinear <- lme(serBilir ~ ns(year, 3), random = list(id = pdDiag(form = ~ ns(year, 3))), data = pbc2)
+
+pbc2$fitted_linear <- fitted(fit_linear)
+pbc2$fitted_nonlinear <- fitted(fit_nonlinear)
+
+newdata <- pbc2[pbc2$id %in% c(128, 142, 46, 57, 216, 93, 114, 120, 294), ]
+
+xyplot(serBilir ~ year | id, data = newdata, pch = 20, 
+       subscripts = TRUE, col = 1, lwd = 3, strip = FALSE, cex = 1.5,
+       ylab = list(label = "Serum Bilirubin", cex = 1.2),
+       xlab = list(label = "Years", cex = 1.2),
+       panel = function(x, y, subscripts = subscripts,...) {
+         panel.xyplot(x, y, subscripts = subscripts, ...)
+         panel.lines(newdata$year[subscripts], newdata$fitted_linear[subscripts], 
+                     col = "red", lwd = 4, lty = 1)
+         panel.lines(newdata$year[subscripts], newdata$fitted_nonlinear[subscripts], 
+                     col = "blue", lwd = 4, lty = 2)
+})
+```
+
+# Survival outcome
+
+```{r}
+fit <- survfit(Surv(years, status2) ~ 1, data = pbc2.id)
+ggsurvplot(fit, data = pbc2.id, risk.table = TRUE, palette = "black", legend = "none")
+```
+

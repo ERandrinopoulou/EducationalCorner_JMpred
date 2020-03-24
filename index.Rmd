@@ -12,6 +12,27 @@ output:
 <span style="color:red; font-weight:bold; font-size:4em;"> Under construction </span>
 
 
-In this webpage, we describe the steps that someone needs to follow in order to obtain dynamic prediction using a joint model of longitudinal and survival data.
-\
-We will first start by exploring the data.
+In this webpage, we describe the steps a research needs to follow in order to obtain dynamic prediction using a joint model of longitudinal and survival data.
+
+# Packages 
+
+```{r packages2, results='asis', echo=FALSE}
+library(dplyr)
+library(kableExtra)
+x <- c("JMbayes", "lattice", "splines")
+Rpack <- lapply(x, FUN = function(x) packageVersion(x))
+Rpack <- lapply(Rpack, FUN = function(x) as.character(x))
+names(Rpack) <- x
+
+Rpack <- data.frame(R = R.Version()$version.string, (Rpack))
+colnames(Rpack)[1] <- "**Software**:"
+
+kable(t(Rpack),  caption = "", format = "html") %>%
+column_spec(1, width = c("7em")) %>%
+column_spec(2, width = c("15em"))
+```
+
+# Data
+
+We will first start by exploring the data. More details can be found in the tab **Data**.
+
