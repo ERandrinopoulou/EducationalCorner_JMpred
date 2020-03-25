@@ -382,9 +382,10 @@ div.tocify {
 
 
 <p><span style="color:red; font-weight:bold; font-size:4em;"> Under construction </span></p>
-<p>In this webpage, we describe the steps a researcher needs to follow in order to obtain dynamic prediction using a joint model of longitudinal and survival data.</p>
+<p>In this webpage, we describe and show the analysis that was performed in the manuscipt: <em>Dynamic prediction using joint models of longitudinal and time-to-event data</em></p>
 <div id="packages" class="section level1">
 <h1>Packages</h1>
+<p>The <code>R</code> packages and versions that are used cen be seen below:</p>
 <table>
 <caption>
 </caption>
@@ -428,9 +429,70 @@ splines
 </div>
 <div id="analysis" class="section level1">
 <h1>Analysis</h1>
-<p>We will first start by exploring the data. More details can be found in the tab <strong>Data</strong>.</p>
+<p>A first imporant step is to investigate the data set. More details can be found in the tab <strong>Data</strong>.</p>
 <div id="fit-a-joint-model" class="section level2">
 <h2>Fit a joint model</h2>
+<p>A mixed-effects submodel can be fitted using the <code>lme</code> function as:</p>
+<pre class="r"><code>fit_nonlinear2 &lt;- lme(log(serBilir) ~ ns(year, 3) + age + sex + drug, 
+                      random = list(id = pdDiag(form = ~ ns(year, 3))), 
+                      data = pbc2)</code></pre>
+<p>A survival submodel can be fitted using the <code>coxph</code> function as:</p>
+<pre class="r"><code>survFit.pbc &lt;- coxph(Surv(years, status2) ~ age + sex + drug, data = pbc2.id, x = TRUE)</code></pre>
+<p>Then the joint model can be fitted using the <code>jointModelBayes</code> function as:</p>
+<pre class="r"><code>jointFit.pbc &lt;- jointModelBayes(fit_nonlinear2, survFit.pbc, timeVar = &quot;year&quot;, 
+                                baseHaz = &quot;regression-splines&quot;, verbose = FALSE)
+summary(jointFit.pbc)</code></pre>
+<pre><code>
+Call:
+jointModelBayes(lmeObject = fit_nonlinear2, survObject = survFit.pbc, 
+    timeVar = &quot;year&quot;, baseHaz = &quot;regression-splines&quot;, verbose = FALSE)
+
+Data Descriptives:
+Longitudinal Process        Event Process
+Number of Observations: 1945    Number of Events: 140 (44.9%)
+Number of subjects: 312
+
+Joint Model Summary:
+Longitudinal Process: Linear mixed-effects model
+Event Process: Relative risk model with spline-approximated 
+        baseline risk function
+Parameterization: Time-dependent value 
+
+      LPML      DIC       pD
+ -3396.213 6482.845 1219.961
+
+Variance Components:
+              StdDev    Corr                
+(Intercept)   0.9975  (Intr)  n(,3)1  n(,3)2
+ns(year, 3)1  1.4842  0.1632                
+ns(year, 3)2  1.5134  0.1964  0.6785        
+ns(year, 3)3  1.8897  0.0552  0.0339  0.5985
+Residual      0.2877                        
+
+Coefficients:
+Longitudinal Process
+                Value Std.Err Std.Dev    2.5%  97.5%      P
+(Intercept)    0.6788  0.0107  0.3667 -0.0331 1.3946  0.063
+ns(year, 3)1   1.0685  0.0063  0.1064  0.8585 1.2862 &lt;0.001
+ns(year, 3)2   1.4036  0.0089  0.1076  1.2042 1.6329 &lt;0.001
+ns(year, 3)3   1.1765  0.0125  0.1419  0.9109 1.4689 &lt;0.001
+age            0.0010  0.0002  0.0058 -0.0102 0.0127  0.864
+sexfemale     -0.1459  0.0054  0.1845 -0.5091 0.2140  0.434
+drugD-penicil -0.1300  0.0035  0.1178 -0.3640 0.1031  0.256
+
+Event Process
+                Value Std.Err Std.Dev    2.5%  97.5%      P
+age            0.0406  0.0011  0.0074  0.0257 0.0543 &lt;0.001
+sexfemale     -0.2892  0.0327  0.1924 -0.6431 0.0715  0.156
+drugD-penicil -0.1806  0.0549  0.1911 -0.5838 0.1572  0.280
+Assoct         1.2810  0.0049  0.0953  1.0981 1.4776 &lt;0.001
+
+MCMC summary:
+iterations: 20000 
+adapt: 3000 
+burn-in: 3000 
+thinning: 10 
+time: 2.5 min</code></pre>
 </div>
 <div id="obtain-dynamic-predictions" class="section level2">
 <h2>Obtain dynamic predictions</h2>

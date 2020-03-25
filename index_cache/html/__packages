@@ -1,0 +1,17 @@
+base
+nlme
+survival
+foreach
+iterators
+doParallel
+StanHeaders
+ggplot2
+rstan
+JMbayes
+lattice
+knitr
+dplyr
+kableExtra
+magrittr
+ggpubr
+survminer

@@ -12,9 +12,18 @@ output:
 <span style="color:red; font-weight:bold; font-size:4em;"> Under construction </span>
 
 
-In this webpage, we describe the steps a researcher needs to follow in order to obtain dynamic prediction using a joint model of longitudinal and survival data.
+In this webpage, we describe and show the analysis that was performed in the manuscipt: _Dynamic prediction using joint models of longitudinal and time-to-event data_
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA, message=FALSE, warning=FALSE)
+library(JMbayes)
+library(lattice)
+library(splines)
+```
 
 # Packages 
+
+The <code>R</code> packages and versions that are used cen be seen below:
 
 ```{r packages2, results='asis', echo=FALSE}
 library(dplyr)
@@ -35,9 +44,28 @@ column_spec(2, width = c("15em"))
 \
 
 # Analysis
-We will first start by exploring the data. More details can be found in the tab **Data**.
+A first imporant step is to investigate the data set. More details can be found in the tab **Data**.
 
 ## Fit a joint model
+
+A mixed-effects submodel can be fitted using the <code>lme</code> function as:
+```{r, cache=TRUE}
+fit_nonlinear2 <- lme(log(serBilir) ~ ns(year, 3) + age + sex + drug, 
+                      random = list(id = pdDiag(form = ~ ns(year, 3))), 
+                      data = pbc2)
+```
+
+A survival submodel can be fitted using the <code>coxph</code> function as:
+```{r, cache=TRUE}
+survFit.pbc <- coxph(Surv(years, status2) ~ age + sex + drug, data = pbc2.id, x = TRUE)
+```
+
+Then the joint model can be fitted using the <code>jointModelBayes</code> function as:
+```{r, cache=TRUE}
+jointFit.pbc <- jointModelBayes(fit_nonlinear2, survFit.pbc, timeVar = "year", 
+                                baseHaz = "regression-splines", verbose = FALSE)
+summary(jointFit.pbc)
+```
 
 ## Obtain dynamic predictions
 

@@ -7,8 +7,6 @@ output:
        collapsed: false
 ---
 
-The pbc2 data is used from the JMbayes package. 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, comment = NA, message=FALSE, warning=FALSE)
 library(JMbayes)
@@ -17,7 +15,16 @@ library(splines)
 library(survminer)
 ```
 
+The pbc2 and pbc2.id data sets are used from the <code>JMbayes</code> package in <code>R</code>. 
+The long format data set is called <code>pbc2</code>: 
+```{r}
+head(pbc2)
+```
 
+The wide format data set is called <code>pbc2.id</code>. 
+```{r}
+head(pbc2.id)
+```
 
 # Longitudinal outcome
 
