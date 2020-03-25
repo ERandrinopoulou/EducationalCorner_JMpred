@@ -12,7 +12,7 @@ output:
 <span style="color:red; font-weight:bold; font-size:4em;"> Under construction </span>
 
 
-In this webpage, we describe the steps a research needs to follow in order to obtain dynamic prediction using a joint model of longitudinal and survival data.
+In this webpage, we describe the steps a researcher needs to follow in order to obtain dynamic prediction using a joint model of longitudinal and survival data.
 
 # Packages 
 
