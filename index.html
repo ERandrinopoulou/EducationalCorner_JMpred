@@ -11,7 +11,7 @@
 
 <meta name="author" content="Eleni-Rosalina Andrinopoulou, Department of Biostatistics, Erasmus Medical Center" />
 
-<meta name="date" content="2020-03-30" />
+<meta name="date" content="2020-04-24" />
 
 <title>Dynamic prediction using joint models of longitudinal and time-to-event data</title>
 
@@ -376,7 +376,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Dynamic prediction using joint models of longitudinal and time-to-event data</h1>
 <h4 class="author">Eleni-Rosalina Andrinopoulou, Department of Biostatistics, Erasmus Medical Center</h4>
-<h4 class="date">30 March 2020</h4>
+<h4 class="date">24 April 2020</h4>
 
 </div>
 
@@ -420,6 +420,14 @@ splines
 </td>
 <td style="text-align:left;width: 15em; ">
 3.6.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 7em; ">
+effects
+</td>
+<td style="text-align:left;width: 15em; ">
+4.1.4
 </td>
 </tr>
 </tbody>
@@ -493,9 +501,68 @@ adapt: 3000
 burn-in: 3000 
 thinning: 10 
 time: 2.5 min</code></pre>
+<p>In order to visualize</p>
+<pre class="r"><code>ef &lt;- Effect(c(&quot;year&quot;, &quot;drug&quot;), fit_nonlinear2, typical=mean, given.values=c(sexfemale=1))
+
+trellis.par.set(strip.background=list(col=&quot;lightgrey&quot;))
+
+plot(ef, ylab = list(&quot;log serum bilirubin&quot;, cex = 1.2), xlab = list(&quot;Year&quot;, cex = 1.2), 
+     rug = FALSE, colors = 1, lwd = 2, grid = TRUE, main = &quot;&quot;)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
 <div id="obtain-dynamic-predictions" class="section level2">
 <h2>Obtain dynamic predictions</h2>
+<pre class="r"><code>newdata_5 &lt;- pbc2[pbc2$id == 5, ]
+
+survRes_5 &lt;- list()
+for (o in 1:dim(newdata_5)[1]) {
+  newdataDyn_5 &lt;- newdata_5[1:o, ]
+  survRes_5[[o]] &lt;- survfitJM(object = jointFit.pbc, newdata = newdataDyn_5, idVar = &quot;id&quot;, simulate = TRUE, 
+                                      survTimes = NULL, last.time = NULL, M = 200, 
+                                      CI.levels = c(0.025, 0.975), scale = 1.6)
+ }</code></pre>
+<pre class="r"><code>for (i in 1:dim(newdata_5)[1]) {
+  plot.survfit.JMbayes(survRes_5[[i]], estimator = &quot;mean&quot;, conf.int = TRUE, include.y = TRUE, lwd = 2, col = 1,
+                       cex.lab.z = 0.8,
+                       ylab2 = &quot;log Serum bilirubin&quot;, ylab = &quot;Event-free Probability&quot;, xlab = &quot;Year&quot;,
+                       mgp = c(1.7, 0.5, 0), 
+                       main = paste0(&quot;Patient &quot;, unique(newdata_5$id), &quot;, Visit &quot;, i))
+}   </code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-6-.gif" width="672" /></p>
+<pre class="r"><code>newdata_15 &lt;- pbc2[pbc2$id == 15, ]
+
+survRes_15 &lt;- list()
+for (o in 1:dim(newdata_15)[1]) {
+  newdataDyn_15 &lt;- newdata_15[1:o, ]
+  survRes_15[[o]] &lt;- survfitJM(object = jointFit.pbc, newdata = newdataDyn_15, idVar = &quot;id&quot;, simulate = TRUE, 
+                                      survTimes = NULL, last.time = NULL, M = 200, 
+                                      CI.levels = c(0.025, 0.975), scale = 1.6)
+ }</code></pre>
+<pre class="r"><code>for (i in 1:dim(newdata_15)[1]) {
+  plot.survfit.JMbayes(survRes_15[[i]], estimator = &quot;mean&quot;, conf.int = TRUE, include.y = TRUE, lwd = 2, col = 1,
+                       cex.lab.z = 0.8,
+                       ylab2 = &quot;log Serum bilirubin&quot;, ylab = &quot;Event-free Probability&quot;, xlab = &quot;Year&quot;,
+                       mgp = c(1.7, 0.5, 0),
+                       main = paste0(&quot;Patient &quot;, unique(newdata_15$id), &quot;, Visit &quot;, i))
+}  </code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-8-.gif" width="672" /></p>
+<pre class="r"><code>newdata_42 &lt;- pbc2[pbc2$id == 42, ]
+
+survRes_42 &lt;- list()
+for (o in 1:(dim(newdata_42)[1]-3)) {
+  newdataDyn_42 &lt;- newdata_42[1:o, ]
+  survRes_42[[o]] &lt;- survfitJM(object = jointFit.pbc, newdata = newdataDyn_42, idVar = &quot;id&quot;, simulate = TRUE, 
+                                      survTimes = NULL, last.time = NULL, M = 200, 
+                                      CI.levels = c(0.025, 0.975), scale = 1.6)
+ }</code></pre>
+<pre class="r"><code>for (i in 1:(dim(newdata_42)[1]-3)) {
+  plot.survfit.JMbayes(survRes_42[[i]], estimator = &quot;mean&quot;, conf.int = TRUE, include.y = TRUE, lwd = 2, col = 1,
+                       cex.lab.z = 0.8,
+                       ylab2 = &quot;log Serum bilirubin&quot;, ylab = &quot;Event-free Probability&quot;, xlab = &quot;Year&quot;,
+                       mgp = c(1.7, 0.5, 0),
+                       main = paste0(&quot;Patient &quot;, unique(newdata_42$id), &quot;, Visit &quot;, i))
+}  </code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-10-.gif" width="672" /></p>
 </div>
 <div id="evaluate-the-predictions" class="section level2">
 <h2>Evaluate the predictions</h2>

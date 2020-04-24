@@ -15,3 +15,6 @@ kableExtra
 magrittr
 ggpubr
 survminer
+carData
+effects
+gifski

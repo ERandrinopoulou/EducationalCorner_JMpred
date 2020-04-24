@@ -41,7 +41,7 @@ p1 <- xyplot(serBilir ~ year, groups = id,
                  panel.xyplot(x, y, ...)
                  panel.xyplot(pbc2$year[pbc2$status %in% c("dead", "transplanted")], 
                               pbc2$serBilir[pbc2$status %in% c("dead", "transplanted")], 
-                              col = 1, lwd = 5, type = "smooth")
+                              col = 1, lwd = 3, type = "smooth")
        })
 
 p2 <- xyplot(serBilir ~ year, groups = id, 
@@ -54,7 +54,7 @@ p2 <- xyplot(serBilir ~ year, groups = id,
                  panel.xyplot(x, y, ...)
                  panel.xyplot(pbc2$year[pbc2$status %in% c("alive")], 
                               pbc2$serBilir[pbc2$status %in% c("alive")], 
-                              col = 1, lwd = 5, type = "smooth")
+                              col = 1, lwd = 3, type = "smooth")
        })
 
 print(p1, split = c(1, 1, 2, 1), more = TRUE)
