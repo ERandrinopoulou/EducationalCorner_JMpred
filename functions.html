@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Functions</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Educational Corner: JM dynamic predictions</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">Data</a>
+</li>
+<li>
+  <a href="functions.html">Functions</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Functions</h1>
+
+</div>
+
+
+<p>Function for the calibration curve for the univariate joint model:</p>
+<pre class="r"><code>calJM &lt;- function(object, newdata, Tstart, Thoriz, idVar = &quot;id&quot;, 
+                  simulate = FALSE, M = 100, pl = TRUE, 
+                  include.cens = TRUE, ...) {
+  if (!inherits(object, &quot;JMbayes&quot;)) 
+    stop(&quot;Use only with &#39;JMbayes&#39; objects.\n&quot;)
+  if (!is.data.frame(newdata) || nrow(newdata) == 0) 
+    stop(&quot;&#39;newdata&#39; must be a data.frame with more than one rows.\n&quot;)
+  if (is.null(newdata[[idVar]])) 
+    stop(&quot;&#39;idVar&#39; not in &#39;newdata.\n&#39;&quot;)
+ 
+  id &lt;- newdata[[idVar]]
+  id &lt;- match(id, unique(id))
+  TermsT &lt;- object$Terms$termsT
+  SurvT &lt;- model.response(model.frame(TermsT, newdata))
+  is_counting &lt;- attr(SurvT, &quot;type&quot;) == &quot;counting&quot;
+  Time &lt;- if (is_counting) {
+    ave(SurvT[, 2], id, FUN = function(x) tail(x, 1))
+  } else {
+    SurvT[, 1]
+  }
+  timeVar &lt;- object$timeVar
+  newdata2 &lt;- newdata[Time &gt; Tstart, ]
+  SurvT &lt;- model.response(model.frame(TermsT, newdata2))
+  if (is_counting) {
+    id2 &lt;- newdata2[[idVar]]
+    f &lt;- factor(id2, levels = unique(id2))
+    Time &lt;- ave(SurvT[, 2], f, FUN = function(x) tail(x, 1))
+    delta &lt;- ave(SurvT[, 3], f, FUN = function(x) tail(x, 1))
+  } else {
+    Time &lt;- SurvT[, 1]
+    delta &lt;- SurvT[, 2]
+  }
+  timesInd &lt;- newdata2[[timeVar]] &lt;= Tstart
+  aliveThoriz &lt;- newdata2[Time &gt; Thoriz &amp; timesInd, ]
+  deadThoriz &lt;- newdata2[Time &lt;= Thoriz &amp; delta == 1 &amp; timesInd, ]
+  indCens &lt;- Time &lt; Thoriz &amp; delta == 0 &amp; timesInd
+  censThoriz &lt;- newdata2[indCens, ]
+  nr &lt;- length(unique(newdata2[[idVar]]))
+  idalive &lt;- unique(aliveThoriz[[idVar]])
+  iddead &lt;- unique(deadThoriz[[idVar]])
+  idcens &lt;- unique(censThoriz[[idVar]])
+
+  Surv.aliveThoriz &lt;- if (is_counting) {
+    survfitJM(object, newdata = aliveThoriz, idVar = idVar, 
+              simulate = simulate, M = M, survTimes = Thoriz, 
+              last.time = rep(Tstart, length(idalive)), LeftTrunc_var = all.vars(TermsT)[1L])
+  } else {
+    survfitJM(object, newdata = aliveThoriz, idVar = idVar, 
+              simulate = simulate, M = M, survTimes = Thoriz, 
+              last.time = rep(Tstart, length(idalive)))
+  }
+  Surv.deadThoriz &lt;- if (is_counting) {
+    survfitJM(object, newdata = deadThoriz, idVar = idVar, 
+              simulate = simulate, survTimes = Thoriz, 
+              last.time = rep(Tstart, length(iddead)), LeftTrunc_var = all.vars(TermsT)[1L])
+  } else {
+    survfitJM(object, newdata = deadThoriz, idVar = idVar, 
+              simulate = simulate, survTimes = Thoriz, last.time = rep(Tstart, 
+                                                                       length(iddead)))
+  }
+  Surv.aliveThoriz &lt;- sapply(Surv.aliveThoriz$summaries, &quot;[&quot;, 2)
+  Surv.deadThoriz &lt;- sapply(Surv.deadThoriz$summaries, &quot;[&quot;, 2)
+  if (nrow(censThoriz)) {
+    Surv.censThoriz &lt;- if (is_counting) {
+      survfitJM(object, newdata = censThoriz, idVar = idVar, 
+                simulate = simulate, M = M, survTimes = Thoriz, 
+                last.time = rep(Tstart, length(idcens)), LeftTrunc_var = all.vars(TermsT)[1L])
+    } else {
+      survfitJM(object, newdata = censThoriz, idVar = idVar, 
+                simulate = simulate, M = M, survTimes = Thoriz, 
+                last.time = rep(Tstart, length(idcens)))
+    }
+    tt &lt;- Time[indCens]
+    weights &lt;- if (is_counting) {
+      survfitJM(object, newdata = censThoriz, idVar = idVar, 
+                simulate = simulate, M = M, survTimes = Thoriz, 
+                last.time = tt[!duplicated(censThoriz[[idVar]])], 
+                LeftTrunc_var = all.vars(TermsT)[1L])
+    }
+    else {
+      survfitJM(object, newdata = censThoriz, idVar = idVar, 
+                simulate = simulate, M = M, survTimes = Thoriz, 
+                last.time = tt[!duplicated(censThoriz[[idVar]])])
+    }
+    Surv.censThoriz &lt;- sapply(Surv.censThoriz$summaries, 
+                              &quot;[&quot;, 2)
+    weights &lt;- sapply(weights$summaries, &quot;[&quot;, 2)
+  } else {
+    Surv.censThoriz &lt;- weights &lt;- NA
+  }
+  statusCens &lt;- rbinom(n = length(weights), size = 1, prob = weights)
+  matCens &lt;- data.frame(pred_prob = Surv.censThoriz, status = statusCens)
+  
+  # Calibration plot
+  matDead &lt;- data.frame(pred_prob = 1 - Surv.deadThoriz, status = 1)
+  matAlive &lt;- data.frame(pred_prob = 1 - Surv.aliveThoriz, status = 0)
+  if (include.cens == TRUE) {
+    mat &lt;- rbind(matDead, matAlive, matCens)
+  } else {
+    mat &lt;- rbind(matDead, matAlive)
+  }
+
+  # Logistic calibration curve
+  y &lt;- mat$status
+  p &lt;- mat$pred_prob
+  f.recal &lt;- glm(y ~ p, data = mat, family = binomial)
+  logit &lt;- seq(-7, 7, length = 200)
+  prob &lt;- plogis(logit)
+  newdata = list(p = prob)
+  log.cal.curve &lt;- predict(f.recal, newdata = newdata, type = &quot;response&quot;)
+  log.cal.curve &lt;- list(x = prob, y = log.cal.curve)
+  
+  # A smooth nonparametric fit
+  sm.nonpar.fit &lt;- lowess(mat$pred_prob, mat$status, iter = 0)
+  
+  # Logistic calibration curve with splines terms
+  y &lt;- mat$status
+  p &lt;- mat$pred_prob
+  f.recal &lt;- glm(y ~ ns(p, 2), data = mat, family = binomial)
+  logit &lt;- seq(-7, 7, length = 200)
+  prob &lt;- plogis(logit)
+  newdata = list(p = prob)
+  log.cal.curve.poly &lt;- predict(f.recal, newdata = newdata, type = &quot;response&quot;)
+  log.cal.curve.poly &lt;- list(x = prob, y = log.cal.curve.poly)
+  
+  out &lt;- list(log.cal.curve = log.cal.curve,
+              log.cal.curve.poly = log.cal.curve.poly,
+              sm.nonpar.fit = sm.nonpar.fit)
+  
+  if (pl == TRUE) {
+    plot(0.5, 0.5, xlim = c(0, 1), ylim = c(0, 1), type = &quot;n&quot;,
+         xlab = &quot;Predicted Probability&quot;,
+         ylab = &quot;Actual Probability&quot;,)
+    abline(0, 1, lwd = 6, col = gray(0.85))
+    abline(v = max(p), col = 2, lty = 2)
+    lines(log.cal.curve, lty = 1, lwd = 2)
+    lines(log.cal.curve.poly, lty = 2)
+    lines(sm.nonpar.fit, lty = 3)
+    leg &lt;- &quot;Ideal&quot;
+    leg &lt;- c(leg, &quot;Logistic calibration&quot;)
+    leg &lt;- c(leg, &quot;Logistic calibration (splines)&quot;)
+    leg &lt;- c(leg, &quot;Nonparametric&quot;)
+    leg &lt;- c(leg, &quot;Max predicted prob&quot;)
+    lp = c(-0.05, 1.05)
+    lp = list(x = lp[1], y = lp[2])
+    legend(lp, leg, lty = c(1,1,2,3,6), cex = 1, y.intersp = 0.5,
+           lwd = c(6,2,1,1,1), col = c(gray(0.85), 1, 1, 1, 2), bty = &quot;n&quot;)
+  }
+  out
+}</code></pre>
+<p>Function for the calibration curve for the multivariate joint model:</p>
+<pre class="r"><code>calJM.mv &lt;- function(object, newdata, Tstart, Thoriz, idVar = &quot;id&quot;, 
+                  simulate = FALSE, M = 100, pl = TRUE, 
+                  include.cens = TRUE, ...) {
+  if (!inherits(object, &quot;mvJMbayes&quot;))
+    stop(&quot;Use only with &#39;mvJMbayes&#39; objects.\n&quot;)
+  if (!is.data.frame(newdata) || nrow(newdata) == 0)
+    stop(&quot;&#39;newdata&#39; must be a data.frame with more than one rows.\n&quot;)
+  if (is.null(newdata[[idVar]]))
+    stop(&quot;&#39;idVar&#39; not in &#39;newdata.\n&#39;&quot;)
+  id &lt;- newdata[[idVar]]
+  id &lt;- match(id, unique(id))
+  TermsT &lt;- object$model_info$coxph_components$Terms
+  environment(TermsT) &lt;- parent.frame()#.GlobalEnv
+  SurvT &lt;- model.response(model.frame(TermsT, newdata)) 
+  is_counting &lt;- attr(SurvT, &quot;type&quot;) == &quot;counting&quot;
+  is_interval &lt;- attr(SurvT, &quot;type&quot;) == &quot;interval&quot;
+  Time &lt;- if (is_counting) {
+    ave(SurvT[, 2], id, FUN = function (x) tail(x, 1))
+  } else if (is_interval) {
+    Time1 &lt;- SurvT[, &quot;time1&quot;]
+    Time2 &lt;- SurvT[, &quot;time2&quot;]
+    Time &lt;- Time1
+    Time[Time2 != 1] &lt;- Time2[Time2 != 1]
+    Time
+  } else {
+    SurvT[, 1]
+  }
+  timeVar &lt;- object$model_info$timeVar
+  newdata2 &lt;- newdata[Time &gt; Tstart, ]
+  id2 &lt;- newdata2[[idVar]]
+  SurvT &lt;- model.response(model.frame(TermsT, newdata2))
+  if (is_counting) {
+    f &lt;- factor(id2, levels = unique(id2))
+    Time &lt;- ave(SurvT[, 2], f, FUN = function (x) tail(x, 1))
+    event &lt;- ave(SurvT[, 3], f, FUN = function (x) tail(x, 1))
+  } else if (is_interval) {
+    Time1 &lt;- SurvT[, &quot;time1&quot;]
+    Time2 &lt;- SurvT[, &quot;time2&quot;]
+    Time &lt;- Time1
+    Time[Time2 != 1] &lt;- Time2[Time2 != 1]
+    event &lt;- SurvT[, &quot;status&quot;]
+  } else {
+    Time &lt;- SurvT[, 1]
+    event &lt;- SurvT[, 2]
+  }
+  timesInd &lt;- newdata2[[timeVar]] &lt;= Tstart
+  aliveThoriz &lt;- newdata2[Time &gt; Thoriz &amp; timesInd, ]
+  deadThoriz &lt;- newdata2[Time &lt;= Thoriz &amp; (event == 1 | event == 3) &amp; timesInd, ]
+  indCens &lt;- Time &lt; Thoriz &amp; (event == 0 | event == 2) &amp; timesInd
+  censThoriz &lt;- newdata2[indCens, ]
+  nr &lt;- length(unique(newdata2[[idVar]]))
+  idalive &lt;- unique(aliveThoriz[[idVar]])
+  iddead &lt;- unique(deadThoriz[[idVar]])
+  idcens &lt;- unique(censThoriz[[idVar]])
+  
+  Surv.aliveThoriz &lt;- if (is_counting) {
+    survfitJM(object, newdata = aliveThoriz, idVar = idVar, M = M,
+              survTimes = Thoriz, last.time = rep(Tstart, length(idalive)),
+              LeftTrunc_var = all.vars(TermsT)[1L])
+  } else {
+    survfitJM(object, newdata = aliveThoriz, idVar = idVar, M = M,
+              survTimes = Thoriz, last.time = rep(Tstart, length(idalive)))
+    
+  }
+  Surv.deadThoriz &lt;- if (is_counting) {
+    survfitJM(object, newdata = deadThoriz, idVar = idVar, 
+              survTimes = Thoriz, last.time = rep(Tstart, length(iddead)),
+              LeftTrunc_var = all.vars(TermsT)[1L])
+  } else {
+    survfitJM(object, newdata = deadThoriz, idVar = idVar, 
+              survTimes = Thoriz, last.time = rep(Tstart, length(iddead)))
+  }
+  Surv.aliveThoriz &lt;- sapply(Surv.aliveThoriz$summaries, &quot;[&quot;, 2)
+  Surv.deadThoriz &lt;- sapply(Surv.deadThoriz$summaries, &quot;[&quot;, 2)
+  if (nrow(censThoriz)) {
+    Surv.censThoriz &lt;- if (is_counting) {
+      survfitJM(object, newdata = censThoriz, idVar = idVar, M = M,
+                survTimes = Thoriz, last.time = rep(Tstart, length(idcens)),
+                LeftTrunc_var = all.vars(TermsT)[1L])
+    } else {
+      survfitJM(object, newdata = censThoriz, idVar = idVar, M = M,
+                survTimes = Thoriz, last.time = rep(Tstart, length(idcens)))
+    }
+    tt &lt;- Time[indCens]
+    weights &lt;- if (is_counting) {
+      survfitJM(object, newdata = censThoriz, idVar = idVar, M = M,
+                survTimes = Thoriz, last.time = tt[!duplicated(censThoriz[[idVar]])],
+                LeftTrunc_var = all.vars(TermsT)[1L])
+    } else {
+      survfitJM(object, newdata = censThoriz, idVar = idVar, M = M,
+                survTimes = Thoriz, last.time = tt[!duplicated(censThoriz[[idVar]])])
+    }
+    Surv.censThoriz &lt;- sapply(Surv.censThoriz$summaries, &quot;[&quot;, 2)
+    weights &lt;- sapply(weights$summaries, &quot;[&quot;, 2)
+  } else {
+    Surv.censThoriz &lt;- weights &lt;- NA
+  }
+  
+
+  statusCens &lt;- rbinom(n = length(weights), size = 1, prob = weights)
+  matCens &lt;- data.frame(pred_prob = Surv.censThoriz, status = statusCens)
+  
+  # Calibration plot
+  matDead &lt;- data.frame(pred_prob = 1 - Surv.deadThoriz, status = 1)
+  matAlive &lt;- data.frame(pred_prob = 1 - Surv.aliveThoriz, status = 0)
+  if (include.cens == TRUE) {
+    mat &lt;- rbind(matDead, matAlive, matCens)
+  } else {
+    mat &lt;- rbind(matDead, matAlive)
+  }
+  
+  
+  # Logistic calibration curve
+  y &lt;- mat$status
+  p &lt;- mat$pred_prob
+  f.recal &lt;- glm(y ~ p, data = mat, family = binomial)
+  logit &lt;- seq(-7, 7, length = 200)
+  prob &lt;- plogis(logit)
+  newdata = list(p = prob)
+  log.cal.curve &lt;- predict(f.recal, newdata = newdata, type = &quot;response&quot;)
+  log.cal.curve &lt;- list(x = prob, y = log.cal.curve)
+  
+  # A smooth nonparametric fit
+  sm.nonpar.fit &lt;- lowess(mat$pred_prob, mat$status, iter = 0)
+  
+  # Logistic calibration curve with splines terms
+  y &lt;- mat$status
+  p &lt;- mat$pred_prob
+  f.recal &lt;- glm(y ~ ns(p, 2), data = mat, family = binomial)
+  logit &lt;- seq(-7, 7, length = 200)
+  prob &lt;- plogis(logit)
+  newdata = list(p = prob)
+  log.cal.curve.poly &lt;- predict(f.recal, newdata = newdata, type = &quot;response&quot;)
+  log.cal.curve.poly &lt;- list(x = prob, y = log.cal.curve.poly)
+  
+  out &lt;- list(log.cal.curve = log.cal.curve,
+              log.cal.curve.poly = log.cal.curve.poly,
+              sm.nonpar.fit = sm.nonpar.fit)
+  
+  if (pl == TRUE) {
+    plot(0.5, 0.5, xlim = c(0, 1), ylim = c(0, 1), type = &quot;n&quot;,
+         xlab = &quot;Predicted Probability&quot;,
+         ylab = &quot;Actual Probability&quot;,)
+    abline(0, 1, lwd = 6, col = gray(0.85))
+    abline(v = max(p), col = 2, lty = 2)
+    lines(log.cal.curve, lty = 1, lwd = 2)
+    lines(log.cal.curve.poly, lty = 2)
+    lines(sm.nonpar.fit, lty = 3)
+    leg &lt;- &quot;Ideal&quot;
+    leg &lt;- c(leg, &quot;Logistic calibration&quot;)
+    leg &lt;- c(leg, &quot;Logistic calibration (splines)&quot;)
+    leg &lt;- c(leg, &quot;Nonparametric&quot;)
+    leg &lt;- c(leg, &quot;Max predicted prob&quot;)
+    lp = c(-0.05, 1.05)
+    lp = list(x = lp[1], y = lp[2])
+    legend(lp, leg, lty = c(1,1,2,3,6), cex = 1, y.intersp = 0.5,
+           lwd = c(6,2,1,1,1), col = c(gray(0.85), 1, 1, 1, 2), bty = &quot;n&quot;)
+  }
+  out
+}</code></pre>
+
+&nbsp;
+<hr>
+<p style="text-align: center;">&copy; Eleni-Rosalina Andrinopoulou </p>
+
+<!-- icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<p style="text-align: center;">
+    <a href="https://twitter.com/ERandrinopoulou/" class="fa fa-twitter"></a>
+    <a href="https://github.com/erandrinopoulou/" class="fa fa-github"></a>
+    <a href="https://www.erandrinopoulou.com/" class="fa fa-globe"></a>
+</p>
+
+&nbsp;
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

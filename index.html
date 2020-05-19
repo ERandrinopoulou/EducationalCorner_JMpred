@@ -11,7 +11,7 @@
 
 <meta name="author" content="Eleni-Rosalina Andrinopoulou, Department of Biostatistics, Erasmus Medical Center" />
 
-<meta name="date" content="2020-04-24" />
+<meta name="date" content="2020-05-19" />
 
 <title>Dynamic prediction using joint models of longitudinal and time-to-event data</title>
 
@@ -362,6 +362,9 @@ div.tocify {
 <li>
   <a href="about.html">Data</a>
 </li>
+<li>
+  <a href="functions.html">Functions</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -376,7 +379,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Dynamic prediction using joint models of longitudinal and time-to-event data</h1>
 <h4 class="author">Eleni-Rosalina Andrinopoulou, Department of Biostatistics, Erasmus Medical Center</h4>
-<h4 class="date">24 April 2020</h4>
+<h4 class="date">19 May 2020</h4>
 
 </div>
 
@@ -522,10 +525,10 @@ for (o in 1:dim(newdata_5)[1]) {
                                       CI.levels = c(0.025, 0.975), scale = 1.6)
  }</code></pre>
 <pre class="r"><code>for (i in 1:dim(newdata_5)[1]) {
-  plot.survfit.JMbayes(survRes_5[[i]], estimator = &quot;mean&quot;, conf.int = TRUE, include.y = TRUE, lwd = 2, col = 1,
-                       cex.lab.z = 0.8,
-                       ylab2 = &quot;log Serum bilirubin&quot;, ylab = &quot;Event-free Probability&quot;, xlab = &quot;Year&quot;,
-                       mgp = c(1.7, 0.5, 0), 
+  plot.survfit.JMbayes(survRes_5[[i]], estimator = &quot;mean&quot;, conf.int = TRUE, include.y = TRUE, 
+                       lwd = 2, col = 1, cex.lab.z = 0.8,
+                       ylab2 = &quot;log Serum bilirubin&quot;, ylab = &quot;Event-free Probability&quot;, 
+                       xlab = &quot;Year&quot;, mgp = c(1.7, 0.5, 0), 
                        main = paste0(&quot;Patient &quot;, unique(newdata_5$id), &quot;, Visit &quot;, i))
 }   </code></pre>
 <p><img src="index_files/figure-html/unnamed-chunk-6-.gif" width="672" /></p>
@@ -539,10 +542,10 @@ for (o in 1:dim(newdata_15)[1]) {
                                       CI.levels = c(0.025, 0.975), scale = 1.6)
  }</code></pre>
 <pre class="r"><code>for (i in 1:dim(newdata_15)[1]) {
-  plot.survfit.JMbayes(survRes_15[[i]], estimator = &quot;mean&quot;, conf.int = TRUE, include.y = TRUE, lwd = 2, col = 1,
-                       cex.lab.z = 0.8,
-                       ylab2 = &quot;log Serum bilirubin&quot;, ylab = &quot;Event-free Probability&quot;, xlab = &quot;Year&quot;,
-                       mgp = c(1.7, 0.5, 0),
+  plot.survfit.JMbayes(survRes_15[[i]], estimator = &quot;mean&quot;, conf.int = TRUE, include.y = TRUE, 
+                       lwd = 2, col = 1, cex.lab.z = 0.8,
+                       ylab2 = &quot;log Serum bilirubin&quot;, ylab = &quot;Event-free Probability&quot;, 
+                       xlab = &quot;Year&quot;, mgp = c(1.7, 0.5, 0),
                        main = paste0(&quot;Patient &quot;, unique(newdata_15$id), &quot;, Visit &quot;, i))
 }  </code></pre>
 <p><img src="index_files/figure-html/unnamed-chunk-8-.gif" width="672" /></p>
@@ -556,16 +559,117 @@ for (o in 1:(dim(newdata_42)[1]-3)) {
                                       CI.levels = c(0.025, 0.975), scale = 1.6)
  }</code></pre>
 <pre class="r"><code>for (i in 1:(dim(newdata_42)[1]-3)) {
-  plot.survfit.JMbayes(survRes_42[[i]], estimator = &quot;mean&quot;, conf.int = TRUE, include.y = TRUE, lwd = 2, col = 1,
-                       cex.lab.z = 0.8,
-                       ylab2 = &quot;log Serum bilirubin&quot;, ylab = &quot;Event-free Probability&quot;, xlab = &quot;Year&quot;,
-                       mgp = c(1.7, 0.5, 0),
+  plot.survfit.JMbayes(survRes_42[[i]], estimator = &quot;mean&quot;, conf.int = TRUE, 
+                       include.y = TRUE, lwd = 2, col = 1, cex.lab.z = 0.8,
+                       ylab2 = &quot;log Serum bilirubin&quot;, ylab = &quot;Event-free Probability&quot;, 
+                       xlab = &quot;Year&quot;, mgp = c(1.7, 0.5, 0),
                        main = paste0(&quot;Patient &quot;, unique(newdata_42$id), &quot;, Visit &quot;, i))
 }  </code></pre>
 <p><img src="index_files/figure-html/unnamed-chunk-10-.gif" width="672" /></p>
 </div>
 <div id="evaluate-the-predictions" class="section level2">
 <h2>Evaluate the predictions</h2>
+<p>First load the functions for calibration curves that are presented in the tab <strong>Functions</strong>.</p>
+<div id="model-1" class="section level3">
+<h3>Model 1</h3>
+<p>Fit a joint model as before.</p>
+<pre class="r"><code>fit1 &lt;- lme(log(serBilir) ~ year + age + sex + drug, random =~ year | id, data = pbc2)
+survFit1 &lt;- coxph(Surv(years, status2) ~ age + sex + drug, data = pbc2.id, x = TRUE)
+jointFit1 &lt;- jointModelBayes(fit1, survFit1, timeVar = &quot;year&quot;, 
+                                baseHaz = &quot;regression-splines&quot;, verbose = FALSE)</code></pre>
+<p>The predictive performance measures are first obtained using the original data set. We assume a prediction window of 5 - 7 years.</p>
+<pre class="r"><code>auc_app &lt;- aucJM(jointFit1, newdata = pbc2,
+             Tstart = 5, Thoriz = 7)
+pe_app &lt;- prederrJM(jointFit1, newdata = pbc2,
+                Tstart = 5, Thoriz = 7)
+cal_app &lt;- calJM(jointFit1, newdata = pbc2,
+               Tstart = 5, Thoriz = 7)</code></pre>
+<p>We can now procceed with internal validation.</p>
+<pre class="r"><code>n &lt;- dim(pbc2.id)[1]
+auc_opt &lt;- numeric()
+pe_opt &lt;- numeric()
+cal_opt_lin &lt;- list()
+cal_opt_poly &lt;- list()
+
+for (i in 1:100) {
+  print(i)
+  # A sample of size n is generated with replacement from the original data set, 
+  # where patients are drawn by identification number
+  set.seed(2020 + i)
+  n_new &lt;- sample(1:n, n, replace=TRUE)
+  n_new &lt;- sort(n_new, decreasing = FALSE)
+
+  
+  trainingData &lt;- NULL
+  k &lt;- 1
+  for (j in 1:length(n_new)){
+    n_len &lt;- length(pbc2$id[pbc2$id %in% n_new[j]])
+    newdata &lt;- pbc2[pbc2$id %in% n_new[j],]
+    newdata$id &lt;- as.numeric(newdata$id)
+    newdata$id &lt;- k
+    trainingData &lt;- rbind(trainingData, newdata)
+    k &lt;- k + 1
+  }
+  trainingData.id &lt;- trainingData[!duplicated(trainingData$id), ]
+  
+  # A new model is fitted using the generated sample and including
+  # all n patients and all time points
+  fit1 &lt;- lme(log(serBilir) ~ year + age + sex + drug, 
+                        random =~ year | id,
+                        data = trainingData)
+  survFit1 &lt;- coxph(Surv(years, status2) ~ age + sex + drug, 
+                       data = trainingData.id, x = TRUE)
+  jointFit1 &lt;- jointModelBayes(fit1, survFit1, timeVar = &quot;year&quot;, 
+                                  baseHaz = &quot;regression-splines&quot;)
+  
+  # The performance measures for the model are tested on the bootstrap data set 
+  # but using only the data up to time t
+  auc_boot &lt;- aucJM(jointFit1, newdata = trainingData,
+               Tstart = 5, Thoriz = 7)
+  pe_boot &lt;- prederrJM(jointFit1, newdata = trainingData,
+                  Tstart = 5, Thoriz = 7)
+  cal_boot &lt;- calJM(jointFit1, newdata = trainingData,
+                       Tstart = 5, Thoriz = 7)
+  
+  
+  # The performance of the model is also evaluated on the original data set up to time t
+  auc_orig &lt;- aucJM(jointFit1, newdata = pbc2,
+                    Tstart = 5, Thoriz = 7)
+  pe_orig &lt;- prederrJM(jointFit1, newdata = pbc2,
+                       Tstart = 5, Thoriz = 7)
+  cal_orig &lt;- calJM(jointFit1, newdata = pbc2,
+                       Tstart = 5, Thoriz = 7)
+  
+  # The optimism in the prediction performance is estimated by subtracting the measures boot and org
+  auc_opt[i] &lt;- auc_boot$auc - auc_orig$auc
+  pe_opt[i] &lt;- pe_boot$prederr - pe_orig$prederr
+  cal_opt_lin[[i]] &lt;- cal_boot$log.cal.curve$y - cal_orig$log.cal.curve$y
+  cal_opt_poly[[i]] &lt;- cal_boot$log.cal.curve.poly$y - cal_orig$log.cal.curve.poly$y
+}</code></pre>
+<p>Finally, we need to obtain and present the results.</p>
+<pre class="r"><code>auc_corr = auc_app1$auc - auc_opt
+pe_corr = pe_app1$prederr + pe_opt
+cal_corr = lapply(cal_opt, function(x) {cal_app$log.cal.curve.poly$y - x}) 
+
+cal_opt_means &lt;- colMeans(do.call(rbind,cal_opt))
+cal_corr_means &lt;- cal_app$log.cal.curve.poly$y - cal_opt_means
+
+plot(0.5, 0.5, xlim = c(0,1), ylim = c(0,1), type = &quot;n&quot;, 
+     xlab = &quot;Predicted Probability&quot;, 
+     ylab = &quot;Actual Probability&quot;,
+     main = &quot;Model 1&quot;,
+     cex.axis = 1.2, cex.lab = 1.5, cex.main = 1.7)
+lapply(cal_corr, function(x) lines(cal_app$log.cal.curve.poly$x, x, col =&quot;grey&quot;))
+abline(0, 1, lwd = 3, col = 1)
+lines(cal_app$log.cal.curve.poly$x, cal_corr_means, col = 1, lwd = 2 , lty = 2)
+
+boxplot(auc_corr, ylab = &quot;AUC&quot;)
+
+boxplot(pe_corr, ylab = &quot;PE&quot;)</code></pre>
+<p><img src="calJM_model1.jpeg" /></p>
+<p><img src="aucJM_model1.jpeg" /></p>
+<p><img src="peJM_model1.jpeg" /></p>
+</div>
 </div>
 </div>
 
