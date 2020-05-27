@@ -156,7 +156,7 @@ for (i in 1:(dim(newdata_42)[1]-3)) {
 
 ## Evaluate the predictions
 
-First load the functions for calibration curves that are presented in the tab **Functions**.
+First load the functions for the calibration curves that are presented in the tab **Functions**.
 
 ```{r, cache=FALSE, include = FALSE}
 source("calJM.R")
@@ -164,9 +164,9 @@ source("calJM.R")
 
 ### Model 1
 
-Fit a joint model as before.
+Fit a joint model as before. In particular, we assume a linear mixed-effects submodel with a linear time structure in both the fixed and the random effects. We, moreover, assume the underlying value of serum bilirubin to be associated with the survival outcome.
 
-```{r, cache=TRUE}
+```{r, cache = TRUE, eval = FALSE}
 fit1 <- lme(log(serBilir) ~ year + age + sex + drug, random =~ year | id, data = pbc2)
 survFit1 <- coxph(Surv(years, status2) ~ age + sex + drug, data = pbc2.id, x = TRUE)
 jointFit1 <- jointModelBayes(fit1, survFit1, timeVar = "year", 
@@ -184,7 +184,7 @@ cal_app <- calJM(jointFit1, newdata = pbc2,
                Tstart = 5, Thoriz = 7)
 ```
 
-We can now procceed with internal validation.
+We calculate the optimist as below.
 
 ```{r, cache=TRUE, eval = FALSE}
 n <- dim(pbc2.id)[1]
@@ -196,11 +196,10 @@ cal_opt_poly <- list()
 for (i in 1:100) {
   print(i)
   # A sample of size n is generated with replacement from the original data set, 
-  # where patients are drawn by identification number
+  # where patients are drawn by identification number.
   set.seed(2020 + i)
   n_new <- sample(1:n, n, replace=TRUE)
   n_new <- sort(n_new, decreasing = FALSE)
-
   
   trainingData <- NULL
   k <- 1
@@ -215,7 +214,7 @@ for (i in 1:100) {
   trainingData.id <- trainingData[!duplicated(trainingData$id), ]
   
   # A new model is fitted using the generated sample and including
-  # all n patients and all time points
+  # all n patients and all time points.
   fit1 <- lme(log(serBilir) ~ year + age + sex + drug, 
                         random =~ year | id,
                         data = trainingData)
@@ -224,8 +223,8 @@ for (i in 1:100) {
   jointFit1 <- jointModelBayes(fit1, survFit1, timeVar = "year", 
                                   baseHaz = "regression-splines")
   
-  # The performance measures for the model are tested on the bootstrap data set 
-  # but using only the data up to time t
+  # The performance measures for the model are tested on the bootstrap data set
+  # but using only the data up to time t.
   auc_boot <- aucJM(jointFit1, newdata = trainingData,
                Tstart = 5, Thoriz = 7)
   pe_boot <- prederrJM(jointFit1, newdata = trainingData,
@@ -233,8 +232,7 @@ for (i in 1:100) {
   cal_boot <- calJM(jointFit1, newdata = trainingData,
                        Tstart = 5, Thoriz = 7)
   
-  
-  # The performance of the model is also evaluated on the original data set up to time t
+  # The performance of the model is also evaluated on the original data set up to time t.
   auc_orig <- aucJM(jointFit1, newdata = pbc2,
                     Tstart = 5, Thoriz = 7)
   pe_orig <- prederrJM(jointFit1, newdata = pbc2,
@@ -242,7 +240,7 @@ for (i in 1:100) {
   cal_orig <- calJM(jointFit1, newdata = pbc2,
                        Tstart = 5, Thoriz = 7)
   
-  # The optimism in the prediction performance is estimated by subtracting the measures boot and org
+  # The optimism in the prediction performance is estimated by subtracting the measures boot and org.
   auc_opt[i] <- auc_boot$auc - auc_orig$auc
   pe_opt[i] <- pe_boot$prederr - pe_orig$prederr
   cal_opt_lin[[i]] <- cal_boot$log.cal.curve$y - cal_orig$log.cal.curve$y
@@ -251,7 +249,7 @@ for (i in 1:100) {
 ```
 
 
-Finally, we need to obtain and present the results.
+Finally, we obtain the corrected measures and present the results.
 
 ```{r, cache=TRUE, eval = FALSE}
 auc_corr = auc_app1$auc - auc_opt
@@ -281,3 +279,132 @@ boxplot(pe_corr, ylab = "PE")
 
 
 ![](peJM_model1.jpeg)
+
+### Model 4
+
+Fit a joint model as before. In particular, we assume a multivariate mixed-effects submodel including the underlying value and slope of serum bilirubin and the underlying value of spiders. A linear time structure in both the fixed and the random effects is used. A random intercept and slope are assumed for the outcome serum bilirubin while a random intercept is assumed for the outcome spiders. 
+
+```{r, cache = TRUE, eval = FALSE}
+Forms <- list("log(serBilir)" = "value",
+              "log(serBilir)" = list(fixed = ~ 1, random = ~ 1,
+                               indFixed = 2, indRandom = 2, name = "slope"),
+             "spiders" = "value")
+
+fit4 <- mvglmer(list(log(serBilir) ~ year + age + sex + drug + (year | id), 
+                     spiders ~ year + age + sex + drug + (1 | id)), 
+                families = list(gaussian, binomial),
+                data = pbc2)
+survFit4 <- coxph(Surv(years, status2) ~ age + sex + drug, 
+                  data = pbc2.id, model = TRUE)
+jointFit4 <- mvJointModelBayes(fit4, survFit4, timeVar = "year", Formulas = Forms)
+```
+
+The predictive performance measures are first obtained using the original data set. We assume a prediction window of 5 - 7 years.
+
+```{r, cache=TRUE, eval = FALSE}
+auc_app <- aucJM(jointFit4, newdata = pbc2,
+                 Tstart = 5, Thoriz = 7)
+pe_app <- prederrJM(jointFit4, newdata = pbc2,
+                    Tstart = 5, Thoriz = 7)
+cal_app <- calJM.mv(jointFit4, newdata = pbc2,
+                    Tstart = 5, Thoriz = 7)
+```
+
+We calculate the optimist as below.
+
+```{r, cache=TRUE, eval = FALSE}
+n <- dim(pbc2.id)[1]
+auc_opt <- numeric()
+pe_opt <- numeric()
+cal_opt_lin <- list()
+cal_opt_poly <- list()
+for (i in 1:100) {
+  print(i)  
+  # A sample of size n is generated with replacement from the original data set, 
+  # where patients are drawn by identification number.
+  set.seed(2020 + i)
+  n_new <- sample(pbc2$id, dim(pbc2.id)[1], replace=TRUE)
+  n_new <- sort(n_new, decreasing = FALSE)
+  
+  trainingData <- NULL
+  k <- 1
+  for (j in 1:length(n_new)){
+    n_len <- length(pbc2$id[pbc2$id %in% n_new[j]])
+    newdata <- pbc2[pbc2$id %in% n_new[j],]
+    newdata$id <- as.numeric(newdata$id)
+    newdata$id <- k
+    trainingData <- rbind(trainingData, newdata)
+    k <- k + 1
+  }
+  
+  trainingData.id <- trainingData[!duplicated(trainingData$id), ]
+  
+  # A new model is fitted using the generated sample and including
+  # all n patients and all time points.
+  Forms <- list("log(serBilir)" = "value",
+                "log(serBilir)" = list(fixed = ~ 1, random = ~ 1,
+                                       indFixed = 2, indRandom = 2, name = "slope"),
+                "spiders" = "value")
+  fit4 <- mvglmer(list(log(serBilir) ~ year + age + sex + drug + (year | id), 
+                       spiders ~ year + age + sex + drug + (1 | id)), 
+                  families = list(gaussian, binomial),
+                  data = trainingData)
+  survFit4 <- coxph(Surv(years, status2) ~ age + sex + drug, 
+                    data = trainingData.id, model = TRUE)
+  jointFit4 <- mvJointModelBayes(fit4, survFit4, timeVar = "year", Formulas = Forms)
+  
+  # The performance measures for the model are tested on the bootstrap data set
+  # but using only the data up to time t.
+  auc_boot <- aucJM(jointFit4, newdata = trainingData,
+                    Tstart = 5, Thoriz = 7)
+  pe_boot <- prederrJM(jointFit4, newdata = trainingData,
+                       Tstart = 5, Thoriz = 7)
+  cal_boot <- calJM.mv(jointFit4, newdata = trainingData,
+                       Tstart = 5, Thoriz = 7)
+  
+  # The performance of the model is also evaluated on the original data set up to time t.
+  auc_orig <- aucJM(jointFit4, newdata = pbc2,
+                    Tstart = 5, Thoriz = 7)
+  pe_orig <- prederrJM(jointFit4, newdata = pbc2,
+                       Tstart = 5, Thoriz = 7)
+  cal_orig <- calJM.mv(jointFit4, newdata = pbc2,
+                       Tstart = 5, Thoriz = 7)
+  
+  # The optimism in the prediction performance is estimated by subtracting the measures boot and org.
+  auc_opt[i] <- auc_boot$auc - auc_orig$auc
+  pe_opt[i] <- pe_boot$prederr - pe_orig$prederr
+  cal_opt_lin[[i]] <- cal_boot$log.cal.curve$y - cal_orig$log.cal.curve$y
+  cal_opt_poly[[i]] <- cal_boot$log.cal.curve.poly$y - cal_orig$log.cal.curve.poly$y
+}
+```
+
+
+Finally, we obtain the corrected measures and present the results.
+
+```{r, cache=TRUE, eval = FALSE}
+auc_corr = auc_app1$auc - auc_opt
+pe_corr = pe_app1$prederr + pe_opt
+cal_corr = lapply(cal_opt, function(x) {cal_app$log.cal.curve.poly$y - x}) 
+
+cal_opt_means <- colMeans(do.call(rbind,cal_opt))
+cal_corr_means <- cal_app$log.cal.curve.poly$y - cal_opt_means
+
+plot(0.5, 0.5, xlim = c(0,1), ylim = c(0,1), type = "n", 
+     xlab = "Predicted Probability", 
+     ylab = "Actual Probability",
+     main = "Model 1",
+     cex.axis = 1.2, cex.lab = 1.5, cex.main = 1.7)
+lapply(cal_corr, function(x) lines(cal_app$log.cal.curve.poly$x, x, col ="grey"))
+abline(0, 1, lwd = 3, col = 1)
+lines(cal_app$log.cal.curve.poly$x, cal_corr_means, col = 1, lwd = 2 , lty = 2)
+
+boxplot(auc_corr, ylab = "AUC")
+
+boxplot(pe_corr, ylab = "PE")
+```
+
+![](calJM_model4.jpeg)
+
+![](aucJM_model4.jpeg)
+
+![](peJM_model4.jpeg)

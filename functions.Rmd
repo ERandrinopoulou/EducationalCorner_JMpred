@@ -17,6 +17,7 @@ library(splines)
 library(survminer)
 ```
 
+# Univariate models 
 
 Function for the calibration curve for the univariate joint model:
 ```{r}
@@ -172,6 +173,7 @@ calJM <- function(object, newdata, Tstart, Thoriz, idVar = "id",
 }
 ```
 
+# Multivariate models 
 
 Function for the calibration curve for the multivariate joint model:
 ```{r}
