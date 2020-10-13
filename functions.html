@@ -408,8 +408,10 @@ div.tocify {
   if (is_counting) {
     id2 &lt;- newdata2[[idVar]]
     f &lt;- factor(id2, levels = unique(id2))
-    Time &lt;- ave(SurvT[, 2], f, FUN = function(x) tail(x, 1))
-    delta &lt;- ave(SurvT[, 3], f, FUN = function(x) tail(x, 1))
+    Time &lt;- ave(SurvT[, 2], f, FUN = function(x) tail(x, 
+                                                      1))
+    delta &lt;- ave(SurvT[, 3], f, FUN = function(x) tail(x, 
+                                                       1))
   } else {
     Time &lt;- SurvT[, 1]
     delta &lt;- SurvT[, 2]
@@ -435,8 +437,8 @@ div.tocify {
   }
   Surv.deadThoriz &lt;- if (is_counting) {
     survfitJM(object, newdata = deadThoriz, idVar = idVar, 
-              simulate = simulate, survTimes = Thoriz, 
-              last.time = rep(Tstart, length(iddead)), LeftTrunc_var = all.vars(TermsT)[1L])
+              simulate = simulate, survTimes = Thoriz, last.time = rep(Tstart, 
+                                                                       length(iddead)), LeftTrunc_var = all.vars(TermsT)[1L])
   } else {
     survfitJM(object, newdata = deadThoriz, idVar = idVar, 
               simulate = simulate, survTimes = Thoriz, last.time = rep(Tstart, 
@@ -472,63 +474,55 @@ div.tocify {
   } else {
     Surv.censThoriz &lt;- weights &lt;- NA
   }
-  statusCens &lt;- rbinom(n = length(weights), size = 1, prob = weights)
-  matCens &lt;- data.frame(pred_prob = Surv.censThoriz, status = statusCens)
   
-  # Calibration plot
-  matDead &lt;- data.frame(pred_prob = 1 - Surv.deadThoriz, status = 1)
-  matAlive &lt;- data.frame(pred_prob = 1 - Surv.aliveThoriz, status = 0)
+  # until here I used the prederrJM function from the JMbayes package
+
+  newdata.id &lt;- newdata[tapply(row.names(newdata), newdata$id, tail, 1), ]
+  
+  statusCens &lt;- rbinom(n = length(weights), size = 1, prob = weights)
+  matCens &lt;- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.censThoriz)], pred_prob = Surv.censThoriz, status = statusCens)
+  
+  # New part for calibration plot
+  matDead &lt;- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.deadThoriz)], pred_prob = 1 - Surv.deadThoriz, status = 1)
+  matAlive &lt;- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.aliveThoriz)], pred_prob = 1 - Surv.aliveThoriz, status = 0)
   if (include.cens == TRUE) {
     mat &lt;- rbind(matDead, matAlive, matCens)
   } else {
     mat &lt;- rbind(matDead, matAlive)
   }
+ 
+  # Cox model calibration curve
+  #  The complementary log-log transformation for the predicted probabilities rather than the probabilities themselves.
+  mat$cox.cll &lt;- log(-log(1 - mat$pred_prob))
+  # Use a conventional Cox proportional hazards model with restricted cubic splines to model the relationship between  
+  #  log(-log(1-pred)) and the log-hazard of the outcome
+  calibrate.cox &lt;- coxph(Surv(years, status) ~ rcs(cox.cll, 3), x = T,
+                         data = mat) 
+  # Based on the fitted model, an estimated probability of the occurrence of the
+  #  outcome prior to time t_0 can be estimated for each value of pred
+  predict.grid.cox &lt;- seq(quantile(mat$pred_prob, probs = 0.01),
+                          quantile(mat$pred_prob, probs = 0.99), length  = 100)
+  predict.grid.cox.cll &lt;- log(-log(1 - predict.grid.cox))
+  
+  predict.grid.cox.df &lt;- data.frame(predict.grid.cox)
+  predict.grid.cox.cll.df &lt;- data.frame(predict.grid.cox.cll)
+  
+  names(predict.grid.cox.df) &lt;- &quot;cox&quot;
+  names(predict.grid.cox.cll.df) &lt;- &quot;cox.cll&quot;
 
-  # Logistic calibration curve
-  y &lt;- mat$status
-  p &lt;- mat$pred_prob
-  f.recal &lt;- glm(y ~ p, data = mat, family = binomial)
-  logit &lt;- seq(-7, 7, length = 200)
-  prob &lt;- plogis(logit)
-  newdata = list(p = prob)
-  log.cal.curve &lt;- predict(f.recal, newdata = newdata, type = &quot;response&quot;)
-  log.cal.curve &lt;- list(x = prob, y = log.cal.curve)
+  predict.calibrate.cox &lt;- 1 - predictSurvProb(calibrate.cox,
+                                               newdata = predict.grid.cox.cll.df,
+                                               times = Thoriz)
   
-  # A smooth nonparametric fit
-  sm.nonpar.fit &lt;- lowess(mat$pred_prob, mat$status, iter = 0)
-  
-  # Logistic calibration curve with splines terms
-  y &lt;- mat$status
-  p &lt;- mat$pred_prob
-  f.recal &lt;- glm(y ~ ns(p, 2), data = mat, family = binomial)
-  logit &lt;- seq(-7, 7, length = 200)
-  prob &lt;- plogis(logit)
-  newdata = list(p = prob)
-  log.cal.curve.poly &lt;- predict(f.recal, newdata = newdata, type = &quot;response&quot;)
-  log.cal.curve.poly &lt;- list(x = prob, y = log.cal.curve.poly)
-  
-  out &lt;- list(log.cal.curve = log.cal.curve,
-              log.cal.curve.poly = log.cal.curve.poly,
-              sm.nonpar.fit = sm.nonpar.fit)
+  # Save results
+  out &lt;- list(x = predict.grid.cox, y = predict.calibrate.cox)
   
   if (pl == TRUE) {
-    plot(0.5, 0.5, xlim = c(0, 1), ylim = c(0, 1), type = &quot;n&quot;,
-         xlab = &quot;Predicted Probability&quot;,
-         ylab = &quot;Actual Probability&quot;,)
+    plot(predict.grid.cox, predict.calibrate.cox, type=&quot;l&quot;, lty=1, col=&quot;red&quot;,
+         xlim=c(0,1),ylim=c(0,1),
+         xlab = &quot;Predicted probability&quot;,
+         ylab = &quot;Observed probability&quot;)
     abline(0, 1, lwd = 6, col = gray(0.85))
-    abline(v = max(p), col = 2, lty = 2)
-    lines(log.cal.curve, lty = 1, lwd = 2)
-    lines(log.cal.curve.poly, lty = 2)
-    lines(sm.nonpar.fit, lty = 3)
-    leg &lt;- &quot;Ideal&quot;
-    leg &lt;- c(leg, &quot;Logistic calibration&quot;)
-    leg &lt;- c(leg, &quot;Logistic calibration (splines)&quot;)
-    leg &lt;- c(leg, &quot;Nonparametric&quot;)
-    leg &lt;- c(leg, &quot;Max predicted prob&quot;)
-    lp = c(-0.05, 1.05)
-    lp = list(x = lp[1], y = lp[2])
-    legend(lp, leg, lty = c(1,1,2,3,6), cex = 1, y.intersp = 0.5,
-           lwd = c(6,2,1,1,1), col = c(gray(0.85), 1, 1, 1, 2), bty = &quot;n&quot;)
   }
   out
 }</code></pre>
@@ -634,13 +628,16 @@ div.tocify {
     Surv.censThoriz &lt;- weights &lt;- NA
   }
   
-
-  statusCens &lt;- rbinom(n = length(weights), size = 1, prob = weights)
-  matCens &lt;- data.frame(pred_prob = Surv.censThoriz, status = statusCens)
+  # until here I used the prederrJM.mv function from the JMbayes package
   
-  # Calibration plot
-  matDead &lt;- data.frame(pred_prob = 1 - Surv.deadThoriz, status = 1)
-  matAlive &lt;- data.frame(pred_prob = 1 - Surv.aliveThoriz, status = 0)
+  newdata.id &lt;- newdata[tapply(row.names(newdata), newdata$id, tail, 1), ]
+  
+  statusCens &lt;- rbinom(n = length(weights), size = 1, prob = weights)
+  matCens &lt;- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.censThoriz)], pred_prob = Surv.censThoriz, status = statusCens)
+  
+  # New part for calibration plot
+  matDead &lt;- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.deadThoriz)], pred_prob = 1 - Surv.deadThoriz, status = 1)
+  matAlive &lt;- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.aliveThoriz)], pred_prob = 1 - Surv.aliveThoriz, status = 0)
   if (include.cens == TRUE) {
     mat &lt;- rbind(matDead, matAlive, matCens)
   } else {
@@ -648,51 +645,39 @@ div.tocify {
   }
   
   
-  # Logistic calibration curve
-  y &lt;- mat$status
-  p &lt;- mat$pred_prob
-  f.recal &lt;- glm(y ~ p, data = mat, family = binomial)
-  logit &lt;- seq(-7, 7, length = 200)
-  prob &lt;- plogis(logit)
-  newdata = list(p = prob)
-  log.cal.curve &lt;- predict(f.recal, newdata = newdata, type = &quot;response&quot;)
-  log.cal.curve &lt;- list(x = prob, y = log.cal.curve)
   
-  # A smooth nonparametric fit
-  sm.nonpar.fit &lt;- lowess(mat$pred_prob, mat$status, iter = 0)
+  # Cox model calibration curve
+  #  The complementary log-log transformation for the predicted probabilities rather than the probabilities themselves.
+  mat$cox.cll &lt;- log(-log(1 - mat$pred_prob))
+  # Use a conventional Cox proportional hazards model with restricted cubic splines to model the relationship between  
+  #  log(-log(1-pred)) and the log-hazard of the outcome
+  calibrate.cox &lt;- coxph(Surv(years, status) ~ rcs(cox.cll, 3), x = T,
+                         data = mat) 
+  # Based on the fitted model, an estimated probability of the occurrence of the
+  #  outcome prior to time t_0 can be estimated for each value of pred
+  predict.grid.cox &lt;- seq(quantile(mat$pred_prob, probs = 0.01),
+                          quantile(mat$pred_prob, probs = 0.99), length  = 100)
+  predict.grid.cox.cll &lt;- log(-log(1 - predict.grid.cox))
   
-  # Logistic calibration curve with splines terms
-  y &lt;- mat$status
-  p &lt;- mat$pred_prob
-  f.recal &lt;- glm(y ~ ns(p, 2), data = mat, family = binomial)
-  logit &lt;- seq(-7, 7, length = 200)
-  prob &lt;- plogis(logit)
-  newdata = list(p = prob)
-  log.cal.curve.poly &lt;- predict(f.recal, newdata = newdata, type = &quot;response&quot;)
-  log.cal.curve.poly &lt;- list(x = prob, y = log.cal.curve.poly)
+  predict.grid.cox.df &lt;- data.frame(predict.grid.cox)
+  predict.grid.cox.cll.df &lt;- data.frame(predict.grid.cox.cll)
   
-  out &lt;- list(log.cal.curve = log.cal.curve,
-              log.cal.curve.poly = log.cal.curve.poly,
-              sm.nonpar.fit = sm.nonpar.fit)
+  names(predict.grid.cox.df) &lt;- &quot;cox&quot;
+  names(predict.grid.cox.cll.df) &lt;- &quot;cox.cll&quot;
+  
+  predict.calibrate.cox &lt;- 1 - predictSurvProb(calibrate.cox,
+                                               newdata = predict.grid.cox.cll.df,
+                                               times = Thoriz)
+  
+  # Save results
+  out &lt;- list(x = predict.grid.cox, y = predict.calibrate.cox)
   
   if (pl == TRUE) {
-    plot(0.5, 0.5, xlim = c(0, 1), ylim = c(0, 1), type = &quot;n&quot;,
-         xlab = &quot;Predicted Probability&quot;,
-         ylab = &quot;Actual Probability&quot;,)
+    plot(predict.grid.cox, predict.calibrate.cox, type=&quot;l&quot;, lty=1, col=&quot;red&quot;,
+         xlim=c(0,1),ylim=c(0,1),
+         xlab = &quot;Predicted probability&quot;,
+         ylab = &quot;Observed probability&quot;)
     abline(0, 1, lwd = 6, col = gray(0.85))
-    abline(v = max(p), col = 2, lty = 2)
-    lines(log.cal.curve, lty = 1, lwd = 2)
-    lines(log.cal.curve.poly, lty = 2)
-    lines(sm.nonpar.fit, lty = 3)
-    leg &lt;- &quot;Ideal&quot;
-    leg &lt;- c(leg, &quot;Logistic calibration&quot;)
-    leg &lt;- c(leg, &quot;Logistic calibration (splines)&quot;)
-    leg &lt;- c(leg, &quot;Nonparametric&quot;)
-    leg &lt;- c(leg, &quot;Max predicted prob&quot;)
-    lp = c(-0.05, 1.05)
-    lp = list(x = lp[1], y = lp[2])
-    legend(lp, leg, lty = c(1,1,2,3,6), cex = 1, y.intersp = 0.5,
-           lwd = c(6,2,1,1,1), col = c(gray(0.85), 1, 1, 1, 2), bty = &quot;n&quot;)
   }
   out
 }</code></pre>
@@ -762,7 +747,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

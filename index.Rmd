@@ -84,6 +84,20 @@ plot(ef, ylab = list("log serum bilirubin", cex = 1.2), xlab = list("Year", cex 
 
 
 ## Obtain dynamic predictions
+
+### Further explanation for equation (5)
+
+The first term of the integrand in (4) can be written as 
+\begin{eqnarray}
+\nonumber\mbox{Pr}(T^*_{l} \geq u \mid  T^*_{l}> t, \tilde{y}_{l}(t);\boldsymbol{\theta})=\\
+&&\nonumber\int \mbox{Pr}(T^*_{l} \geq u\mid T^*_{l}> t, \tilde{y}_{l}(t), \boldsymbol{b}_{l};\boldsymbol{\theta})p(\boldsymbol{b}_{l}\mid  T^*_{l}> t, \tilde{y}_{l}(t);\boldsymbol{\theta})d\boldsymbol{b}_{l}=\\
+&&\nonumber\int \mbox{Pr}(T^*_{l} \geq u\mid T^*_{l}> t, \boldsymbol{b}_{l};\boldsymbol{\theta})p(\boldsymbol{b}_{l}\mid  T^*_{l}> t, \tilde{y}_{l}(t);\boldsymbol{\theta})d\boldsymbol{b}_{l}=\\
+&&\int\frac{S(u \mid \boldsymbol{b}_{l};\boldsymbol{\theta})}{S(t \mid \boldsymbol{b}_{l};\boldsymbol{\theta})}p(\boldsymbol{b}_{l}\mid T^*_{l}> t, \tilde{y}_{l}(t);\boldsymbol{\theta})d\boldsymbol{b}_{l},
+\label{Pr1}
+\end{eqnarray}
+where $S(. \mid \boldsymbol{b}_{l};\boldsymbol{\theta})$ denotes  the conditional survival function on the random effects of patient $l$. The simplification from line 2 to line 3 is achieved under the assumption that the longitudinal and the survival outcomes are independent, given the random effects.
+
+
 ```{r, cache=TRUE}
 newdata_5 <- pbc2[pbc2$id == 5, ]
 
@@ -190,8 +204,7 @@ We calculate the optimist as below.
 n <- dim(pbc2.id)[1]
 auc_opt <- numeric()
 pe_opt <- numeric()
-cal_opt_lin <- list()
-cal_opt_poly <- list()
+cal_opt <- list()
 
 for (i in 1:100) {
   print(i)
@@ -243,8 +256,7 @@ for (i in 1:100) {
   # The optimism in the prediction performance is estimated by subtracting the measures boot and org.
   auc_opt[i] <- auc_boot$auc - auc_orig$auc
   pe_opt[i] <- pe_boot$prederr - pe_orig$prederr
-  cal_opt_lin[[i]] <- cal_boot$log.cal.curve$y - cal_orig$log.cal.curve$y
-  cal_opt_poly[[i]] <- cal_boot$log.cal.curve.poly$y - cal_orig$log.cal.curve.poly$y
+  cal_opt[[i]] <- cal_boot$y - cal_orig$y
 }
 ```
 
@@ -252,21 +264,22 @@ for (i in 1:100) {
 Finally, we obtain the corrected measures and present the results.
 
 ```{r, cache=TRUE, eval = FALSE}
-auc_corr = auc_app1$auc - auc_opt
-pe_corr = pe_app1$prederr + pe_opt
-cal_corr = lapply(cal_opt, function(x) {cal_app$log.cal.curve.poly$y - x}) 
+auc_corr = auc_app$auc - auc_opt
+pe_corr = pe_app$prederr + pe_opt
+cal_corr = lapply(cal_opt, function(x) {cal_app$y - x}) 
 
-cal_opt_means <- colMeans(do.call(rbind,cal_opt))
-cal_corr_means <- cal_app$log.cal.curve.poly$y - cal_opt_means
+cal_opt_means <- colMeans(do.call(rbind, cal_opt))
+cal_corr_means <- cal_app$y - cal_opt_means
 
 plot(0.5, 0.5, xlim = c(0,1), ylim = c(0,1), type = "n", 
      xlab = "Predicted Probability", 
      ylab = "Actual Probability",
      main = "Model 1",
      cex.axis = 1.2, cex.lab = 1.5, cex.main = 1.7)
-lapply(cal_corr, function(x) lines(cal_app$log.cal.curve.poly$x, x, col ="grey"))
+lapply(cal_corr, function(x) lines(cal_app$x, x, col ="grey"))
 abline(0, 1, lwd = 3, col = 1)
-lines(cal_app$log.cal.curve.poly$x, cal_corr_means, col = 1, lwd = 2 , lty = 2)
+lines(cal_app$x, cal_corr_means, col = 1, lwd = 2 , lty = 2)
+
 
 boxplot(auc_corr, ylab = "AUC")
 
@@ -316,8 +329,7 @@ We calculate the optimist as below.
 n <- dim(pbc2.id)[1]
 auc_opt <- numeric()
 pe_opt <- numeric()
-cal_opt_lin <- list()
-cal_opt_poly <- list()
+cal_opt<- list()
 for (i in 1:100) {
   print(i)  
   # A sample of size n is generated with replacement from the original data set, 
@@ -373,8 +385,7 @@ for (i in 1:100) {
   # The optimism in the prediction performance is estimated by subtracting the measures boot and org.
   auc_opt[i] <- auc_boot$auc - auc_orig$auc
   pe_opt[i] <- pe_boot$prederr - pe_orig$prederr
-  cal_opt_lin[[i]] <- cal_boot$log.cal.curve$y - cal_orig$log.cal.curve$y
-  cal_opt_poly[[i]] <- cal_boot$log.cal.curve.poly$y - cal_orig$log.cal.curve.poly$y
+  cal_opt[[i]] <- cal_boot$y - cal_orig$y
 }
 ```
 
@@ -382,21 +393,21 @@ for (i in 1:100) {
 Finally, we obtain the corrected measures and present the results.
 
 ```{r, cache=TRUE, eval = FALSE}
-auc_corr = auc_app1$auc - auc_opt
-pe_corr = pe_app1$prederr + pe_opt
-cal_corr = lapply(cal_opt, function(x) {cal_app$log.cal.curve.poly$y - x}) 
+auc_corr = auc_app$auc - auc_opt
+pe_corr = pe_app$prederr + pe_opt
+cal_corr = lapply(cal_opt, function(x) {cal_app$y - x}) 
 
-cal_opt_means <- colMeans(do.call(rbind,cal_opt))
-cal_corr_means <- cal_app$log.cal.curve.poly$y - cal_opt_means
+cal_opt_means <- colMeans(do.call(rbind, cal_opt))
+cal_corr_means <- cal_app$y - cal_opt_means
 
 plot(0.5, 0.5, xlim = c(0,1), ylim = c(0,1), type = "n", 
      xlab = "Predicted Probability", 
      ylab = "Actual Probability",
-     main = "Model 1",
+     main = "Model 4",
      cex.axis = 1.2, cex.lab = 1.5, cex.main = 1.7)
-lapply(cal_corr, function(x) lines(cal_app$log.cal.curve.poly$x, x, col ="grey"))
+lapply(cal_corr, function(x) lines(cal_app$x, x, col ="grey"))
 abline(0, 1, lwd = 3, col = 1)
-lines(cal_app$log.cal.curve.poly$x, cal_corr_means, col = 1, lwd = 2 , lty = 2)
+lines(cal_app$x, cal_corr_means, col = 1, lwd = 2 , lty = 2)
 
 boxplot(auc_corr, ylab = "AUC")
 
@@ -408,3 +419,23 @@ boxplot(pe_corr, ylab = "PE")
 ![](aucJM_model4.jpeg)
 
 ![](peJM_model4.jpeg)
+
+
+
+# Statistical terminology
+
+## Mixed-effects models
+
+The mixed effects models take into account that measurements from the same subjects may be more correlated than measurements from different subjects. They consist of two parts, the fixed part and the random part. The fixed-effects part describes the average evolution in time of a specific clinical parameter under study (for example serum bilirubin), where this average is taken overall from the subjects in the sample at hand and is an estimate of the evolution of the clinical parameter in the target population. The random-effects (patient specific) part describes the evolution in time for each of the subjects under study, and accounts for the correlation in the data within subjects.
+
+
+## Splines 
+
+The easiest way to relax linearity is to assume polynomial effects. An alternative option is to use regression splines. In particular, they split the range of values of the continuous predictor into sub-intervals using a series of knots and within each sub-interval assume a polynomial. The polynomial function have a certain degree (i.e., constant, linear, quadratic, ...)
+
+Perperoglou, A., Sauerbrei, W., Abrahamowicz, M., & Schmid, M. (2019). A review of spline function procedures in R. BMC medical research methodology, 19(1), 46.
+
+
+## Bayesian framework
+
+Bayesian statistics is an approach to applying probability to statistical problems. We have prior beliefs about a parameter and Bayesian statistics incorporates these beliefs and evidence (data), to produce new posterior beliefs.
