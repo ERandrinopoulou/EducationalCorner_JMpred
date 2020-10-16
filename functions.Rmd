@@ -119,7 +119,7 @@ calJM <- function(object, newdata, Tstart, Thoriz, idVar = "id",
   newdata.id <- newdata[tapply(row.names(newdata), newdata$id, tail, 1), ]
   
   statusCens <- rbinom(n = length(weights), size = 1, prob = weights)
-  matCens <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.censThoriz)], pred_prob = Surv.censThoriz, status = statusCens)
+  matCens <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.censThoriz)], pred_prob = 1 - Surv.censThoriz, status = 1 - statusCens)
   
   # New part for calibration plot
   matDead <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.deadThoriz)], pred_prob = 1 - Surv.deadThoriz, status = 1)
@@ -274,7 +274,7 @@ calJM.mv <- function(object, newdata, Tstart, Thoriz, idVar = "id",
   newdata.id <- newdata[tapply(row.names(newdata), newdata$id, tail, 1), ]
   
   statusCens <- rbinom(n = length(weights), size = 1, prob = weights)
-  matCens <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.censThoriz)], pred_prob = Surv.censThoriz, status = statusCens)
+  matCens <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.censThoriz)], pred_prob = 1 - Surv.censThoriz, status = 1 - statusCens)
   
   # New part for calibration plot
   matDead <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.deadThoriz)], pred_prob = 1 - Surv.deadThoriz, status = 1)
