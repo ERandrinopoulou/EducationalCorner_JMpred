@@ -91,7 +91,7 @@ xyplot(serBilir ~ year | id, data = newdata, pch = 20,
 })
 ```
 
-# Survival outcome
+re# Survival outcome
 
 ```{r}
 fit <- survfit(Surv(years, status2) ~ 1, data = pbc2.id)

@@ -268,17 +268,18 @@ auc_corr = auc_app$auc - auc_opt
 pe_corr = pe_app$prederr + pe_opt
 cal_corr = lapply(cal_opt, function(x) {cal_app$y - x}) 
 
-cal_opt_means <- colMeans(do.call(rbind, cal_opt))
-cal_corr_means <- cal_app$y - cal_opt_means
+cal_corr_means <- rowMeans(do.call(cbind, cal_corr), na.rm = TRUE)
 
 plot(0.5, 0.5, xlim = c(0,1), ylim = c(0,1), type = "n", 
      xlab = "Predicted Probability", 
      ylab = "Actual Probability",
      main = "Model 1",
      cex.axis = 1.2, cex.lab = 1.5, cex.main = 1.7)
+
 lapply(cal_corr, function(x) lines(cal_app$x, x, col ="grey"))
 abline(0, 1, lwd = 3, col = 1)
-lines(cal_app$x, cal_corr_means, col = 1, lwd = 2 , lty = 2)
+lo <- loess(cal_corr_means ~ cal_app$x)
+lines(cal_app$x, predict(lo), col = 1, lwd = 2 , lty = 2)
 
 
 boxplot(auc_corr, ylab = "AUC")
@@ -397,17 +398,18 @@ auc_corr = auc_app$auc - auc_opt
 pe_corr = pe_app$prederr + pe_opt
 cal_corr = lapply(cal_opt, function(x) {cal_app$y - x}) 
 
-cal_opt_means <- colMeans(do.call(rbind, cal_opt))
-cal_corr_means <- cal_app$y - cal_opt_means
+cal_corr_means <- rowMeans(do.call(cbind, cal_corr), na.rm = TRUE)
 
 plot(0.5, 0.5, xlim = c(0,1), ylim = c(0,1), type = "n", 
      xlab = "Predicted Probability", 
      ylab = "Actual Probability",
-     main = "Model 4",
+     main = "Model 1",
      cex.axis = 1.2, cex.lab = 1.5, cex.main = 1.7)
+
 lapply(cal_corr, function(x) lines(cal_app$x, x, col ="grey"))
 abline(0, 1, lwd = 3, col = 1)
-lines(cal_app$x, cal_corr_means, col = 1, lwd = 2 , lty = 2)
+lo <- loess(cal_corr_means ~ cal_app$x)
+lines(cal_app$x, predict(lo), col = 1, lwd = 2 , lty = 2)
 
 boxplot(auc_corr, ylab = "AUC")
 

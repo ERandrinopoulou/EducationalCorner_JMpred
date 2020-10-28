@@ -381,36 +381,22 @@ div.tocify {
 
 <p>The pbc2 and pbc2.id data sets are used from the <code>JMbayes</code> package in <code>R</code>. The long format data set is called <code>pbc2</code>:</p>
 <pre class="r"><code>head(pbc2)</code></pre>
-<pre><code>  id    years status      drug      age    sex      year ascites hepatomegaly spiders                   edema serBilir serChol albumin alkaline  SGOT platelets
-1  1  1.09517   dead D-penicil 58.76684 female 0.0000000     Yes          Yes     Yes edema despite diuretics     14.5     261    2.60     1718 138.0       190
-2  1  1.09517   dead D-penicil 58.76684 female 0.5256817     Yes          Yes     Yes edema despite diuretics     21.3      NA    2.94     1612   6.2       183
-3  2 14.15234  alive D-penicil 56.44782 female 0.0000000      No          Yes     Yes                No edema      1.1     302    4.14     7395 113.5       221
-4  2 14.15234  alive D-penicil 56.44782 female 0.4983025      No          Yes     Yes                No edema      0.8      NA    3.60     2107 139.5       188
-5  2 14.15234  alive D-penicil 56.44782 female 0.9993429      No          Yes     Yes                No edema      1.0      NA    3.55     1711 144.2       161
-6  2 14.15234  alive D-penicil 56.44782 female 2.1027270      No          Yes     Yes                No edema      1.9      NA    3.92     1365 144.2       122
-  prothrombin histologic status2 fitted_linear fitted_nonlinear
-1        12.2          4       1    14.6150217       14.3736831
-2        11.2          4       1    17.3543233       18.7686245
-3        10.6          3       0     0.9071723        0.9303952
-4        11.0          3       0     1.1124464        1.0888813
-5        11.6          3       0     1.3188483        1.2586718
-6        10.6          3       0     1.7733837        1.6945687</code></pre>
+<pre><code>  id    years status      drug      age    sex      year ascites hepatomegaly spiders                   edema serBilir serChol albumin alkaline  SGOT platelets prothrombin histologic status2
+1  1  1.09517   dead D-penicil 58.76684 female 0.0000000     Yes          Yes     Yes edema despite diuretics     14.5     261    2.60     1718 138.0       190        12.2          4       1
+2  1  1.09517   dead D-penicil 58.76684 female 0.5256817     Yes          Yes     Yes edema despite diuretics     21.3      NA    2.94     1612   6.2       183        11.2          4       1
+3  2 14.15234  alive D-penicil 56.44782 female 0.0000000      No          Yes     Yes                No edema      1.1     302    4.14     7395 113.5       221        10.6          3       0
+4  2 14.15234  alive D-penicil 56.44782 female 0.4983025      No          Yes     Yes                No edema      0.8      NA    3.60     2107 139.5       188        11.0          3       0
+5  2 14.15234  alive D-penicil 56.44782 female 0.9993429      No          Yes     Yes                No edema      1.0      NA    3.55     1711 144.2       161        11.6          3       0
+6  2 14.15234  alive D-penicil 56.44782 female 2.1027270      No          Yes     Yes                No edema      1.9      NA    3.92     1365 144.2       122        10.6          3       0</code></pre>
 <p>The wide format data set is called <code>pbc2.id</code>.</p>
 <pre class="r"><code>head(pbc2.id)</code></pre>
-<pre><code>  id     years       status      drug      age    sex year ascites hepatomegaly spiders                   edema serBilir serChol albumin alkaline  SGOT platelets
-1  1  1.095170         dead D-penicil 58.76684 female    0     Yes          Yes     Yes edema despite diuretics     14.5     261    2.60     1718 138.0       190
-2  2 14.152338        alive D-penicil 56.44782 female    0      No          Yes     Yes                No edema      1.1     302    4.14     7395 113.5       221
-3  3  2.770781         dead D-penicil 70.07447   male    0      No           No      No      edema no diuretics      1.4     176    3.48      516  96.1       151
-4  4  5.270507         dead D-penicil 54.74209 female    0      No          Yes     Yes      edema no diuretics      1.8     244    2.54     6122  60.6       183
-5  5  4.120578 transplanted   placebo 38.10645 female    0      No          Yes     Yes                No edema      3.4     279    3.53      671 113.2       136
-6  6  6.853028         dead   placebo 66.26054 female    0      No          Yes      No                No edema      0.8     248    3.98      944  93.0        NA
-  prothrombin histologic status2
-1        12.2          4       1
-2        10.6          3       0
-3        12.0          4       1
-4        10.3          4       1
-5        10.9          3       0
-6        11.0          3       1</code></pre>
+<pre><code>   id     years       status      drug      age    sex year ascites hepatomegaly spiders                   edema serBilir serChol albumin alkaline  SGOT platelets prothrombin histologic status2
+1   1  1.095170         dead D-penicil 58.76684 female    0     Yes          Yes     Yes edema despite diuretics     14.5     261    2.60     1718 138.0       190        12.2          4       1
+3   2 14.152338        alive D-penicil 56.44782 female    0      No          Yes     Yes                No edema      1.1     302    4.14     7395 113.5       221        10.6          3       0
+12  3  2.770781         dead D-penicil 70.07447   male    0      No           No      No      edema no diuretics      1.4     176    3.48      516  96.1       151        12.0          4       1
+16  4  5.270507         dead D-penicil 54.74209 female    0      No          Yes     Yes      edema no diuretics      1.8     244    2.54     6122  60.6       183        10.3          4       1
+23  5  4.120578 transplanted   placebo 38.10645 female    0      No          Yes     Yes                No edema      3.4     279    3.53      671 113.2       136        10.9          3       0
+29  6  6.853028         dead   placebo 66.26054 female    0      No          Yes      No                No edema      0.8     248    3.98      944  93.0        NA        11.0          3       1</code></pre>
 <div id="longitudinal-outcome" class="section level1">
 <h1>Longitudinal outcome</h1>
 <pre class="r"><code>p1 &lt;- xyplot(log(serBilir) ~ year, groups = id, 
@@ -468,9 +454,7 @@ xyplot(serBilir ~ year | id, data = newdata, pch = 20,
                      col = &quot;blue&quot;, lwd = 4, lty = 2)
 })</code></pre>
 <p><img src="about_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-</div>
-<div id="survival-outcome" class="section level1">
-<h1>Survival outcome</h1>
+<p>re# Survival outcome</p>
 <pre class="r"><code>fit &lt;- survfit(Surv(years, status2) ~ 1, data = pbc2.id)
 ggsurvplot(fit, data = pbc2.id, risk.table = TRUE, palette = &quot;black&quot;, legend = &quot;none&quot;)</code></pre>
 <p><img src="about_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>

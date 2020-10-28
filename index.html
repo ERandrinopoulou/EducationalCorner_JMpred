@@ -11,7 +11,7 @@
 
 <meta name="author" content="Eleni-Rosalina Andrinopoulou, Department of Biostatistics, Erasmus Medical Center" />
 
-<meta name="date" content="2020-10-13" />
+<meta name="date" content="2020-10-28" />
 
 <title>Dynamic prediction using joint models of longitudinal and time-to-event data</title>
 
@@ -379,7 +379,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Dynamic prediction using joint models of longitudinal and time-to-event data</h1>
 <h4 class="author">Eleni-Rosalina Andrinopoulou, Department of Biostatistics, Erasmus Medical Center</h4>
-<h4 class="date">13 October 2020</h4>
+<h4 class="date">28 October 2020</h4>
 
 </div>
 
@@ -657,17 +657,18 @@ for (i in 1:100) {
 pe_corr = pe_app$prederr + pe_opt
 cal_corr = lapply(cal_opt, function(x) {cal_app$y - x}) 
 
-cal_opt_means &lt;- colMeans(do.call(rbind, cal_opt))
-cal_corr_means &lt;- cal_app$y - cal_opt_means
+cal_corr_means &lt;- rowMeans(do.call(cbind, cal_corr), na.rm = TRUE)
 
 plot(0.5, 0.5, xlim = c(0,1), ylim = c(0,1), type = &quot;n&quot;, 
      xlab = &quot;Predicted Probability&quot;, 
      ylab = &quot;Actual Probability&quot;,
      main = &quot;Model 1&quot;,
      cex.axis = 1.2, cex.lab = 1.5, cex.main = 1.7)
+
 lapply(cal_corr, function(x) lines(cal_app$x, x, col =&quot;grey&quot;))
 abline(0, 1, lwd = 3, col = 1)
-lines(cal_app$x, cal_corr_means, col = 1, lwd = 2 , lty = 2)
+lo &lt;- loess(cal_corr_means ~ cal_app$x)
+lines(cal_app$x, predict(lo), col = 1, lwd = 2 , lty = 2)
 
 
 boxplot(auc_corr, ylab = &quot;AUC&quot;)
@@ -766,17 +767,18 @@ for (i in 1:100) {
 pe_corr = pe_app$prederr + pe_opt
 cal_corr = lapply(cal_opt, function(x) {cal_app$y - x}) 
 
-cal_opt_means &lt;- colMeans(do.call(rbind, cal_opt))
-cal_corr_means &lt;- cal_app$y - cal_opt_means
+cal_corr_means &lt;- rowMeans(do.call(cbind, cal_corr), na.rm = TRUE)
 
 plot(0.5, 0.5, xlim = c(0,1), ylim = c(0,1), type = &quot;n&quot;, 
      xlab = &quot;Predicted Probability&quot;, 
      ylab = &quot;Actual Probability&quot;,
-     main = &quot;Model 4&quot;,
+     main = &quot;Model 1&quot;,
      cex.axis = 1.2, cex.lab = 1.5, cex.main = 1.7)
+
 lapply(cal_corr, function(x) lines(cal_app$x, x, col =&quot;grey&quot;))
 abline(0, 1, lwd = 3, col = 1)
-lines(cal_app$x, cal_corr_means, col = 1, lwd = 2 , lty = 2)
+lo &lt;- loess(cal_corr_means ~ cal_app$x)
+lines(cal_app$x, predict(lo), col = 1, lwd = 2 , lty = 2)
 
 boxplot(auc_corr, ylab = &quot;AUC&quot;)
 

@@ -23,7 +23,7 @@ Function for the calibration curve for the univariate joint model:
 ```{r}
 calJM <- function(object, newdata, Tstart, Thoriz, idVar = "id", 
                   simulate = FALSE, M = 100, pl = TRUE, 
-                  include.cens = TRUE, ...) {
+                  include.cens = FALSE, ...) {
   if (!inherits(object, "JMbayes")) 
     stop("Use only with 'JMbayes' objects.\n")
   if (!is.data.frame(newdata) || nrow(newdata) == 0) 
@@ -139,8 +139,8 @@ calJM <- function(object, newdata, Tstart, Thoriz, idVar = "id",
                          data = mat) 
   # Based on the fitted model, an estimated probability of the occurrence of the
   #  outcome prior to time t_0 can be estimated for each value of pred
-  predict.grid.cox <- seq(quantile(mat$pred_prob, probs = 0.01),
-                          quantile(mat$pred_prob, probs = 0.99), length  = 100)
+  predict.grid.cox <- seq(0.01,
+                          0.99, length  = 100)
   predict.grid.cox.cll <- log(-log(1 - predict.grid.cox))
   
   predict.grid.cox.df <- data.frame(predict.grid.cox)
@@ -173,7 +173,7 @@ Function for the calibration curve for the multivariate joint model:
 ```{r}
 calJM.mv <- function(object, newdata, Tstart, Thoriz, idVar = "id", 
                   simulate = FALSE, M = 100, pl = TRUE, 
-                  include.cens = TRUE, ...) {
+                  include.cens = FALSE, ...) {
   if (!inherits(object, "mvJMbayes"))
     stop("Use only with 'mvJMbayes' objects.\n")
   if (!is.data.frame(newdata) || nrow(newdata) == 0)
@@ -296,8 +296,8 @@ calJM.mv <- function(object, newdata, Tstart, Thoriz, idVar = "id",
                          data = mat) 
   # Based on the fitted model, an estimated probability of the occurrence of the
   #  outcome prior to time t_0 can be estimated for each value of pred
-  predict.grid.cox <- seq(quantile(mat$pred_prob, probs = 0.01),
-                          quantile(mat$pred_prob, probs = 0.99), length  = 100)
+  predict.grid.cox <- seq(0.01,
+                          0.99, length  = 100)
   predict.grid.cox.cll <- log(-log(1 - predict.grid.cox))
   
   predict.grid.cox.df <- data.frame(predict.grid.cox)
