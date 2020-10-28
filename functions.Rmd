@@ -47,10 +47,8 @@ calJM <- function(object, newdata, Tstart, Thoriz, idVar = "id",
   if (is_counting) {
     id2 <- newdata2[[idVar]]
     f <- factor(id2, levels = unique(id2))
-    Time <- ave(SurvT[, 2], f, FUN = function(x) tail(x, 
-                                                      1))
-    delta <- ave(SurvT[, 3], f, FUN = function(x) tail(x, 
-                                                       1))
+    Time <- ave(SurvT[, 2], f, FUN = function(x) tail(x, 1))
+    delta <- ave(SurvT[, 3], f, FUN = function(x) tail(x, 1))
   } else {
     Time <- SurvT[, 1]
     delta <- SurvT[, 2]
@@ -76,12 +74,11 @@ calJM <- function(object, newdata, Tstart, Thoriz, idVar = "id",
   }
   Surv.deadThoriz <- if (is_counting) {
     survfitJM(object, newdata = deadThoriz, idVar = idVar, 
-              simulate = simulate, survTimes = Thoriz, last.time = rep(Tstart, 
-                                                                       length(iddead)), LeftTrunc_var = all.vars(TermsT)[1L])
+              simulate = simulate, survTimes = Thoriz, 
+              last.time = rep(Tstart, length(iddead)), LeftTrunc_var = all.vars(TermsT)[1L])
   } else {
     survfitJM(object, newdata = deadThoriz, idVar = idVar, 
-              simulate = simulate, survTimes = Thoriz, last.time = rep(Tstart, 
-                                                                       length(iddead)))
+              simulate = simulate, survTimes = Thoriz, last.time = rep(Tstart, length(iddead)))
   }
   Surv.aliveThoriz <- sapply(Surv.aliveThoriz$summaries, "[", 2)
   Surv.deadThoriz <- sapply(Surv.deadThoriz$summaries, "[", 2)
@@ -119,11 +116,14 @@ calJM <- function(object, newdata, Tstart, Thoriz, idVar = "id",
   newdata.id <- newdata[tapply(row.names(newdata), newdata$id, tail, 1), ]
   
   statusCens <- rbinom(n = length(weights), size = 1, prob = weights)
-  matCens <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.censThoriz)], pred_prob = 1 - Surv.censThoriz, status = 1 - statusCens)
+  matCens <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.censThoriz)], 
+                         pred_prob = 1 - Surv.censThoriz, status = 1 - statusCens)
   
   # New part for calibration plot
-  matDead <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.deadThoriz)], pred_prob = 1 - Surv.deadThoriz, status = 1)
-  matAlive <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.aliveThoriz)], pred_prob = 1 - Surv.aliveThoriz, status = 0)
+  matDead <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.deadThoriz)], 
+                         pred_prob = 1 - Surv.deadThoriz, status = 1)
+  matAlive <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.aliveThoriz)], 
+                         pred_prob = 1 - Surv.aliveThoriz, status = 0)
   if (include.cens == TRUE) {
     mat <- rbind(matDead, matAlive, matCens)
   } else {
@@ -131,9 +131,11 @@ calJM <- function(object, newdata, Tstart, Thoriz, idVar = "id",
   }
  
   # Cox model calibration curve
-  #  The complementary log-log transformation for the predicted probabilities rather than the probabilities themselves.
+  #  The complementary log-log transformation for the predicted probabilities 
+  #  rather than the probabilities themselves.
   mat$cox.cll <- log(-log(1 - mat$pred_prob))
-  # Use a conventional Cox proportional hazards model with restricted cubic splines to model the relationship between  
+  # Use a conventional Cox proportional hazards model with restricted cubic 
+  #  splines to model the relationship between  
   #  log(-log(1-pred)) and the log-hazard of the outcome
   calibrate.cox <- coxph(Surv(years, status) ~ rcs(cox.cll, 3), x = T,
                          data = mat) 
@@ -274,11 +276,14 @@ calJM.mv <- function(object, newdata, Tstart, Thoriz, idVar = "id",
   newdata.id <- newdata[tapply(row.names(newdata), newdata$id, tail, 1), ]
   
   statusCens <- rbinom(n = length(weights), size = 1, prob = weights)
-  matCens <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.censThoriz)], pred_prob = 1 - Surv.censThoriz, status = 1 - statusCens)
+  matCens <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.censThoriz)],
+                         pred_prob = 1 - Surv.censThoriz, status = 1 - statusCens)
   
   # New part for calibration plot
-  matDead <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.deadThoriz)], pred_prob = 1 - Surv.deadThoriz, status = 1)
-  matAlive <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.aliveThoriz)], pred_prob = 1 - Surv.aliveThoriz, status = 0)
+  matDead <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.deadThoriz)], 
+                         pred_prob = 1 - Surv.deadThoriz, status = 1)
+  matAlive <- data.frame(years = newdata.id$years[newdata.id$id %in% names(Surv.aliveThoriz)], 
+                         pred_prob = 1 - Surv.aliveThoriz, status = 0)
   if (include.cens == TRUE) {
     mat <- rbind(matDead, matAlive, matCens)
   } else {
@@ -288,9 +293,11 @@ calJM.mv <- function(object, newdata, Tstart, Thoriz, idVar = "id",
   
   
   # Cox model calibration curve
-  #  The complementary log-log transformation for the predicted probabilities rather than the probabilities themselves.
+  #  The complementary log-log transformation for the predicted probabilities 
+  #  rather than the probabilities themselves.
   mat$cox.cll <- log(-log(1 - mat$pred_prob))
-  # Use a conventional Cox proportional hazards model with restricted cubic splines to model the relationship between  
+  # Use a conventional Cox proportional hazards model with restricted cubic 
+  #  splines to model the relationship between  
   #  log(-log(1-pred)) and the log-hazard of the outcome
   calibrate.cox <- coxph(Surv(years, status) ~ rcs(cox.cll, 3), x = T,
                          data = mat) 
