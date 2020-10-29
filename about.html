@@ -387,7 +387,14 @@ div.tocify {
 3  2 14.15234  alive D-penicil 56.44782 female 0.0000000      No          Yes     Yes                No edema      1.1     302    4.14     7395 113.5       221        10.6          3       0
 4  2 14.15234  alive D-penicil 56.44782 female 0.4983025      No          Yes     Yes                No edema      0.8      NA    3.60     2107 139.5       188        11.0          3       0
 5  2 14.15234  alive D-penicil 56.44782 female 0.9993429      No          Yes     Yes                No edema      1.0      NA    3.55     1711 144.2       161        11.6          3       0
-6  2 14.15234  alive D-penicil 56.44782 female 2.1027270      No          Yes     Yes                No edema      1.9      NA    3.92     1365 144.2       122        10.6          3       0</code></pre>
+6  2 14.15234  alive D-penicil 56.44782 female 2.1027270      No          Yes     Yes                No edema      1.9      NA    3.92     1365 144.2       122        10.6          3       0
+  fitted_linear fitted_nonlinear
+1    15.6779416        15.103772
+2    17.7926729        19.190468
+3     0.9261698         1.013506
+4     1.1286476         1.080198
+5     1.3322379         1.181815
+6     1.7805816         1.605727</code></pre>
 <p>The wide format data set is called <code>pbc2.id</code>.</p>
 <pre class="r"><code>head(pbc2.id)</code></pre>
 <pre><code>   id     years       status      drug      age    sex year ascites hepatomegaly spiders                   edema serBilir serChol albumin alkaline  SGOT platelets prothrombin histologic status2
@@ -402,7 +409,7 @@ div.tocify {
 <pre class="r"><code>p1 &lt;- xyplot(log(serBilir) ~ year, groups = id, 
              data = pbc2[pbc2$status %in% c(&quot;dead&quot;, &quot;transplanted&quot;), ], xlim = c(0, 15),
              col = &quot;grey&quot;, lwd = 1, type = &quot;l&quot;,
-             ylab = list(label = &quot;Logarithmic scale of serum Bilirubin&quot;, cex = 1.2), 
+             ylab = list(label = &quot;Logarithmic scale of serum bilirunbin&quot;, cex = 1.2), 
              xlab = list(label = &quot;Years&quot;, cex = 1.2),
              main = list(label = &quot;Dead or transplanted patients&quot;, cex = 1.04),
              panel = function(x, y,...) {
@@ -415,7 +422,7 @@ div.tocify {
 p2 &lt;- xyplot(log(serBilir) ~ year, groups = id, 
              data = pbc2[pbc2$status %in% c(&quot;alive&quot;), ], xlim = c(0, 15),
              col = &quot;grey&quot;, lwd = 1, type = &quot;l&quot;,
-             ylab = list(label = &quot;Logarithmic scale of serum Bilirubin&quot;, cex = 1.2), 
+             ylab = list(label = &quot;Logarithmic scale of serum bilirunbin&quot;, cex = 1.2), 
              xlab = list(label = &quot;Years&quot;, cex = 1.2),
              main = list(label = &quot;Alive patients&quot;, cex = 1.04),
              panel = function(x, y,...) {
@@ -444,7 +451,7 @@ newdata &lt;- pbc2[pbc2$id %in% c(128, 142, 46, 57, 216, 93, 114, 120, 294), ]
 
 xyplot(serBilir ~ year | id, data = newdata, pch = 20, 
        subscripts = TRUE, col = 1, lwd = 3, strip = FALSE, cex = 1.5,
-       ylab = list(label = &quot;Serum Bilirubin&quot;, cex = 1.2),
+       ylab = list(label = &quot;Serum bilirunbin&quot;, cex = 1.2),
        xlab = list(label = &quot;Years&quot;, cex = 1.2),
        panel = function(x, y, subscripts = subscripts,...) {
          panel.xyplot(x, y, subscripts = subscripts, ...)

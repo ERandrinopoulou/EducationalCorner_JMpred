@@ -34,7 +34,7 @@ head(pbc2.id)
 p1 <- xyplot(log(serBilir) ~ year, groups = id, 
              data = pbc2[pbc2$status %in% c("dead", "transplanted"), ], xlim = c(0, 15),
              col = "grey", lwd = 1, type = "l",
-             ylab = list(label = "Logarithmic scale of serum Bilirubin", cex = 1.2), 
+             ylab = list(label = "Logarithmic scale of serum bilirunbin", cex = 1.2), 
              xlab = list(label = "Years", cex = 1.2),
              main = list(label = "Dead or transplanted patients", cex = 1.04),
              panel = function(x, y,...) {
@@ -47,7 +47,7 @@ p1 <- xyplot(log(serBilir) ~ year, groups = id,
 p2 <- xyplot(log(serBilir) ~ year, groups = id, 
              data = pbc2[pbc2$status %in% c("alive"), ], xlim = c(0, 15),
              col = "grey", lwd = 1, type = "l",
-             ylab = list(label = "Logarithmic scale of serum Bilirubin", cex = 1.2), 
+             ylab = list(label = "Logarithmic scale of serum bilirunbin", cex = 1.2), 
              xlab = list(label = "Years", cex = 1.2),
              main = list(label = "Alive patients", cex = 1.04),
              panel = function(x, y,...) {
@@ -80,7 +80,7 @@ newdata <- pbc2[pbc2$id %in% c(128, 142, 46, 57, 216, 93, 114, 120, 294), ]
 
 xyplot(serBilir ~ year | id, data = newdata, pch = 20, 
        subscripts = TRUE, col = 1, lwd = 3, strip = FALSE, cex = 1.5,
-       ylab = list(label = "Serum Bilirubin", cex = 1.2),
+       ylab = list(label = "Serum bilirunbin", cex = 1.2),
        xlab = list(label = "Years", cex = 1.2),
        panel = function(x, y, subscripts = subscripts,...) {
          panel.xyplot(x, y, subscripts = subscripts, ...)
