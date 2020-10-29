@@ -78,7 +78,7 @@ ef <- Effect(c("year", "drug"), fit_nonlinear2, typical=mean, given.values=c(sex
 
 trellis.par.set(strip.background=list(col="lightgrey"))
 
-plot(ef, ylab = list("log serum bilirubin", cex = 1.2), xlab = list("Year", cex = 1.2), 
+plot(ef, ylab = list("log serum bilirunbin", cex = 1.2), xlab = list("Year", cex = 1.2), 
      rug = FALSE, colors = 1, lwd = 2, grid = TRUE, main = "")
 ```
 
@@ -114,7 +114,7 @@ for (o in 1:dim(newdata_5)[1]) {
 for (i in 1:dim(newdata_5)[1]) {
   plot.survfit.JMbayes(survRes_5[[i]], estimator = "mean", conf.int = TRUE, include.y = TRUE, 
                        lwd = 2, col = 1, cex.lab.z = 0.8,
-                       ylab2 = "log Serum bilirubin", ylab = "Event-free Probability", 
+                       ylab2 = "log Serum bilirunbin", ylab = "Event-free Probability", 
                        xlab = "Year", mgp = c(1.7, 0.5, 0), 
                        main = paste0("Patient ", unique(newdata_5$id), ", Visit ", i))
 }   
@@ -137,7 +137,7 @@ for (o in 1:dim(newdata_15)[1]) {
 for (i in 1:dim(newdata_15)[1]) {
   plot.survfit.JMbayes(survRes_15[[i]], estimator = "mean", conf.int = TRUE, include.y = TRUE, 
                        lwd = 2, col = 1, cex.lab.z = 0.8,
-                       ylab2 = "log Serum bilirubin", ylab = "Event-free Probability", 
+                       ylab2 = "log Serum bilirunbin", ylab = "Event-free Probability", 
                        xlab = "Year", mgp = c(1.7, 0.5, 0),
                        main = paste0("Patient ", unique(newdata_15$id), ", Visit ", i))
 }  
@@ -161,7 +161,7 @@ for (o in 1:(dim(newdata_42)[1]-3)) {
 for (i in 1:(dim(newdata_42)[1]-3)) {
   plot.survfit.JMbayes(survRes_42[[i]], estimator = "mean", conf.int = TRUE, 
                        include.y = TRUE, lwd = 2, col = 1, cex.lab.z = 0.8,
-                       ylab2 = "log Serum bilirubin", ylab = "Event-free Probability", 
+                       ylab2 = "log Serum bilirunbin", ylab = "Event-free Probability", 
                        xlab = "Year", mgp = c(1.7, 0.5, 0),
                        main = paste0("Patient ", unique(newdata_42$id), ", Visit ", i))
 }  
@@ -178,7 +178,7 @@ source("calJM.R")
 
 ### Model 1
 
-Fit a joint model as before. In particular, we assume a linear mixed-effects submodel with a linear time structure in both the fixed and the random effects. We, moreover, assume the underlying value of serum bilirubin to be associated with the survival outcome.
+Fit a joint model as before. In particular, we assume a linear mixed-effects submodel with a linear time structure in both the fixed and the random effects. We, moreover, assume the underlying value of serum bilirunbin to be associated with the survival outcome.
 
 ```{r, cache = TRUE, eval = FALSE}
 fit1 <- lme(log(serBilir) ~ year + age + sex + drug, random =~ year | id, data = pbc2)
@@ -296,7 +296,7 @@ boxplot(pe_corr, ylab = "PE")
 
 ### Model 4
 
-Fit a joint model as before. In particular, we assume a multivariate mixed-effects submodel including the underlying value and slope of serum bilirubin and the underlying value of spiders. A linear time structure in both the fixed and the random effects is used. A random intercept and slope are assumed for the outcome serum bilirubin while a random intercept is assumed for the outcome spiders. 
+Fit a joint model as before. In particular, we assume a multivariate mixed-effects submodel including the underlying value and slope of serum bilirunbin and the underlying value of spiders. A linear time structure in both the fixed and the random effects is used. A random intercept and slope are assumed for the outcome serum bilirunbin while a random intercept is assumed for the outcome spiders. 
 
 ```{r, cache = TRUE, eval = FALSE}
 Forms <- list("log(serBilir)" = "value",
@@ -428,7 +428,7 @@ boxplot(pe_corr, ylab = "PE")
 
 ## Mixed-effects models
 
-The mixed effects models take into account that measurements from the same subjects may be more correlated than measurements from different subjects. They consist of two parts, the fixed part and the random part. The fixed-effects part describes the average evolution in time of a specific clinical parameter under study (for example serum bilirubin), where this average is taken overall from the subjects in the sample at hand and is an estimate of the evolution of the clinical parameter in the target population. The random-effects (patient specific) part describes the evolution in time for each of the subjects under study, and accounts for the correlation in the data within subjects.
+The mixed effects models take into account that measurements from the same subjects may be more correlated than measurements from different subjects. They consist of two parts, the fixed part and the random part. The fixed-effects part describes the average evolution in time of a specific clinical parameter under study (for example serum bilirunbin), where this average is taken overall from the subjects in the sample at hand and is an estimate of the evolution of the clinical parameter in the target population. The random-effects (patient specific) part describes the evolution in time for each of the subjects under study, and accounts for the correlation in the data within subjects.
 
 
 ## Splines 
