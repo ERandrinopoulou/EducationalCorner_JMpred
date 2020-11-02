@@ -30,11 +30,11 @@ head(pbc2.id)
 
 # Longitudinal outcome
 
-```{r}
+```{r, fig.height=10}
 p1 <- xyplot(log(serBilir) ~ year, groups = id, 
              data = pbc2[pbc2$status %in% c("dead", "transplanted"), ], xlim = c(0, 15),
              col = "grey", lwd = 1, type = "l",
-             ylab = list(label = "Logarithmic scale of serum bilirunbin", cex = 1.2), 
+             ylab = list(label = "Logarithmic scale of serum bilirubin", cex = 1.2), 
              xlab = list(label = "Years", cex = 1.2),
              main = list(label = "Dead or transplanted patients", cex = 1.04),
              panel = function(x, y,...) {
@@ -47,7 +47,7 @@ p1 <- xyplot(log(serBilir) ~ year, groups = id,
 p2 <- xyplot(log(serBilir) ~ year, groups = id, 
              data = pbc2[pbc2$status %in% c("alive"), ], xlim = c(0, 15),
              col = "grey", lwd = 1, type = "l",
-             ylab = list(label = "Logarithmic scale of serum bilirunbin", cex = 1.2), 
+             ylab = list(label = "Logarithmic scale of serum bilirubin", cex = 1.2), 
              xlab = list(label = "Years", cex = 1.2),
              main = list(label = "Alive patients", cex = 1.04),
              panel = function(x, y,...) {
@@ -58,9 +58,9 @@ p2 <- xyplot(log(serBilir) ~ year, groups = id,
        })
 
 p3 <- histogram(~pbc2[pbc2$status %in% c("dead", "transplanted"), "years"], data = pbc2,
-       type = "density", xlim = c(0, 15), 
-       xlab = "Event time",
-       main = "", col = "grey")
+                type = "percent", xlim = c(0, 15), 
+                xlab = "Event time", ylab = "Percentage of death/reoperation",
+                main = "", col = "grey")
 
 print(p1, position=c(0, 0.3, 0.5, 1), more=TRUE)
 print(p2, position=c(0.5, 0.3, 1, 1), more=TRUE)
@@ -80,7 +80,7 @@ newdata <- pbc2[pbc2$id %in% c(128, 142, 46, 57, 216, 93, 114, 120, 294), ]
 
 xyplot(serBilir ~ year | id, data = newdata, pch = 20, 
        subscripts = TRUE, col = 1, lwd = 3, strip = FALSE, cex = 1.5,
-       ylab = list(label = "Serum bilirunbin", cex = 1.2),
+       ylab = list(label = "Serum bilirubin", cex = 1.2),
        xlab = list(label = "Years", cex = 1.2),
        panel = function(x, y, subscripts = subscripts,...) {
          panel.xyplot(x, y, subscripts = subscripts, ...)

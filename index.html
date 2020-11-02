@@ -11,7 +11,7 @@
 
 <meta name="author" content="Eleni-Rosalina Andrinopoulou, Department of Biostatistics, Erasmus Medical Center" />
 
-<meta name="date" content="2020-10-29" />
+<meta name="date" content="2020-11-02" />
 
 <title>Dynamic prediction using joint models of longitudinal and time-to-event data</title>
 
@@ -379,7 +379,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Dynamic prediction using joint models of longitudinal and time-to-event data</h1>
 <h4 class="author">Eleni-Rosalina Andrinopoulou, Department of Biostatistics, Erasmus Medical Center</h4>
-<h4 class="date">29 October 2020</h4>
+<h4 class="date">02 November 2020</h4>
 
 </div>
 
@@ -509,7 +509,7 @@ time: 2.5 min</code></pre>
 
 trellis.par.set(strip.background=list(col=&quot;lightgrey&quot;))
 
-plot(ef, ylab = list(&quot;log serum bilirunbin&quot;, cex = 1.2), xlab = list(&quot;Year&quot;, cex = 1.2), 
+plot(ef, ylab = list(&quot;Logarithmic scale of serum bilirubin&quot;, cex = 1.2), xlab = list(&quot;Years&quot;, cex = 1.2), 
      rug = FALSE, colors = 1, lwd = 2, grid = TRUE, main = &quot;&quot;)</code></pre>
 <p><img src="index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
@@ -536,7 +536,7 @@ for (o in 1:dim(newdata_5)[1]) {
 <pre class="r"><code>for (i in 1:dim(newdata_5)[1]) {
   plot.survfit.JMbayes(survRes_5[[i]], estimator = &quot;mean&quot;, conf.int = TRUE, include.y = TRUE, 
                        lwd = 2, col = 1, cex.lab.z = 0.8,
-                       ylab2 = &quot;log Serum bilirunbin&quot;, ylab = &quot;Event-free Probability&quot;, 
+                       ylab2 = &quot;log serum bilirubin&quot;, ylab = &quot;Event-free Probability&quot;, 
                        xlab = &quot;Year&quot;, mgp = c(1.7, 0.5, 0), 
                        main = paste0(&quot;Patient &quot;, unique(newdata_5$id), &quot;, Visit &quot;, i))
 }   </code></pre>
@@ -553,7 +553,7 @@ for (o in 1:dim(newdata_15)[1]) {
 <pre class="r"><code>for (i in 1:dim(newdata_15)[1]) {
   plot.survfit.JMbayes(survRes_15[[i]], estimator = &quot;mean&quot;, conf.int = TRUE, include.y = TRUE, 
                        lwd = 2, col = 1, cex.lab.z = 0.8,
-                       ylab2 = &quot;log Serum bilirunbin&quot;, ylab = &quot;Event-free Probability&quot;, 
+                       ylab2 = &quot;log serum bilirubin&quot;, ylab = &quot;Event-free Probability&quot;, 
                        xlab = &quot;Year&quot;, mgp = c(1.7, 0.5, 0),
                        main = paste0(&quot;Patient &quot;, unique(newdata_15$id), &quot;, Visit &quot;, i))
 }  </code></pre>
@@ -570,7 +570,7 @@ for (o in 1:(dim(newdata_42)[1]-3)) {
 <pre class="r"><code>for (i in 1:(dim(newdata_42)[1]-3)) {
   plot.survfit.JMbayes(survRes_42[[i]], estimator = &quot;mean&quot;, conf.int = TRUE, 
                        include.y = TRUE, lwd = 2, col = 1, cex.lab.z = 0.8,
-                       ylab2 = &quot;log Serum bilirunbin&quot;, ylab = &quot;Event-free Probability&quot;, 
+                       ylab2 = &quot;log serum bilirubin&quot;, ylab = &quot;Event-free Probability&quot;, 
                        xlab = &quot;Year&quot;, mgp = c(1.7, 0.5, 0),
                        main = paste0(&quot;Patient &quot;, unique(newdata_42$id), &quot;, Visit &quot;, i))
 }  </code></pre>
@@ -582,7 +582,7 @@ for (o in 1:(dim(newdata_42)[1]-3)) {
 <p>First load the functions for the calibration curves that are presented in the tab <strong>Functions</strong>.</p>
 <div id="model-1" class="section level3">
 <h3>Model 1</h3>
-<p>Fit a joint model as before. In particular, we assume a linear mixed-effects submodel with a linear time structure in both the fixed and the random effects. We, moreover, assume the underlying value of serum bilirunbin to be associated with the survival outcome.</p>
+<p>Fit a joint model as before. In particular, we assume a linear mixed-effects submodel with a linear time structure in both the fixed and the random effects. We, moreover, assume the underlying value of serum bilirubin to be associated with the survival outcome.</p>
 <pre class="r"><code>fit1 &lt;- lme(log(serBilir) ~ year + age + sex + drug, random =~ year | id, data = pbc2)
 survFit1 &lt;- coxph(Surv(years, status2) ~ age + sex + drug, data = pbc2.id, x = TRUE)
 jointFit1 &lt;- jointModelBayes(fit1, survFit1, timeVar = &quot;year&quot;, 
@@ -680,7 +680,7 @@ boxplot(pe_corr, ylab = &quot;PE&quot;)</code></pre>
 </div>
 <div id="model-4" class="section level3">
 <h3>Model 4</h3>
-<p>Fit a joint model as before. In particular, we assume a multivariate mixed-effects submodel including the underlying value and slope of serum bilirunbin and the underlying value of spiders. A linear time structure in both the fixed and the random effects is used. A random intercept and slope are assumed for the outcome serum bilirunbin while a random intercept is assumed for the outcome spiders.</p>
+<p>Fit a joint model as before. In particular, we assume a multivariate mixed-effects submodel including the underlying value and slope of serum bilirubin and the underlying value of spiders. A linear time structure in both the fixed and the random effects is used. A random intercept and slope are assumed for the outcome serum bilirubin while a random intercept is assumed for the outcome spiders.</p>
 <pre class="r"><code>Forms &lt;- list(&quot;log(serBilir)&quot; = &quot;value&quot;,
               &quot;log(serBilir)&quot; = list(fixed = ~ 1, random = ~ 1,
                                indFixed = 2, indRandom = 2, name = &quot;slope&quot;),
@@ -793,7 +793,7 @@ boxplot(pe_corr, ylab = &quot;PE&quot;)</code></pre>
 <h1>Statistical terminology</h1>
 <div id="mixed-effects-models" class="section level2">
 <h2>Mixed-effects models</h2>
-<p>The mixed effects models take into account that measurements from the same subjects may be more correlated than measurements from different subjects. They consist of two parts, the fixed part and the random part. The fixed-effects part describes the average evolution in time of a specific clinical parameter under study (for example serum bilirunbin), where this average is taken overall from the subjects in the sample at hand and is an estimate of the evolution of the clinical parameter in the target population. The random-effects (patient specific) part describes the evolution in time for each of the subjects under study, and accounts for the correlation in the data within subjects.</p>
+<p>The mixed effects models take into account that measurements from the same subjects may be more correlated than measurements from different subjects. They consist of two parts, the fixed part and the random part. The fixed-effects part describes the average evolution in time of a specific clinical parameter under study (for example serum bilirubin), where this average is taken overall from the subjects in the sample at hand and is an estimate of the evolution of the clinical parameter in the target population. The random-effects (patient specific) part describes the evolution in time for each of the subjects under study, and accounts for the correlation in the data within subjects.</p>
 </div>
 <div id="splines" class="section level2">
 <h2>Splines</h2>
