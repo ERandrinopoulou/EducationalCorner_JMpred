@@ -89,10 +89,9 @@ plot(ef, ylab = list("Logarithmic scale of serum bilirubin", cex = 1.2), xlab = 
 
 The first term of the integrand in (4) can be written as 
 \begin{eqnarray}
-\nonumber\mbox{Pr}(T^*_{l} \geq u \mid  T^*_{l}> t, \tilde{y}_{l}(t);\boldsymbol{\theta})=\\
-&&\nonumber\int \mbox{Pr}(T^*_{l} \geq u\mid T^*_{l}> t, \tilde{y}_{l}(t), \boldsymbol{b}_{l};\boldsymbol{\theta})p(\boldsymbol{b}_{l}\mid  T^*_{l}> t, \tilde{y}_{l}(t);\boldsymbol{\theta})d\boldsymbol{b}_{l}=\\
-&&\nonumber\int \mbox{Pr}(T^*_{l} \geq u\mid T^*_{l}> t, \boldsymbol{b}_{l};\boldsymbol{\theta})p(\boldsymbol{b}_{l}\mid  T^*_{l}> t, \tilde{y}_{l}(t);\boldsymbol{\theta})d\boldsymbol{b}_{l}=\\
-&&\int\frac{S(u \mid \boldsymbol{b}_{l};\boldsymbol{\theta})}{S(t \mid \boldsymbol{b}_{l};\boldsymbol{\theta})}p(\boldsymbol{b}_{l}\mid T^*_{l}> t, \tilde{y}_{l}(t);\boldsymbol{\theta})d\boldsymbol{b}_{l},
+\nonumber\mbox{Pr}(T^*_{l} \geq u \mid  T^*_{l}> t, \tilde{y}_{l}(t);\boldsymbol{\theta})&&=\nonumber\int \mbox{Pr}(T^*_{l} \geq u\mid T^*_{l}> t, \tilde{y}_{l}(t), \boldsymbol{b}_{l};\boldsymbol{\theta})p(\boldsymbol{b}_{l}\mid  T^*_{l}> t, \tilde{y}_{l}(t);\boldsymbol{\theta})d\boldsymbol{b}_{l}\\
+&&=\nonumber\int \mbox{Pr}(T^*_{l} \geq u\mid T^*_{l}> t, \boldsymbol{b}_{l};\boldsymbol{\theta})p(\boldsymbol{b}_{l}\mid  T^*_{l}> t, \tilde{y}_{l}(t);\boldsymbol{\theta})d\boldsymbol{b}_{l}\\
+&&=\int\frac{S(u \mid \boldsymbol{b}_{l};\boldsymbol{\theta})}{S(t \mid \boldsymbol{b}_{l};\boldsymbol{\theta})}p(\boldsymbol{b}_{l}\mid T^*_{l}> t, \tilde{y}_{l}(t);\boldsymbol{\theta})d\boldsymbol{b}_{l},
 \label{Pr1}
 \end{eqnarray}
 where $S(. \mid \boldsymbol{b}_{l};\boldsymbol{\theta})$ denotes  the conditional survival function on the random effects of patient $l$. The simplification from line 2 to line 3 is achieved under the assumption that the longitudinal and the survival outcomes are independent, given the random effects.

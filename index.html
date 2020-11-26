@@ -11,7 +11,7 @@
 
 <meta name="author" content="Eleni-Rosalina Andrinopoulou, Department of Biostatistics, Erasmus Medical Center" />
 
-<meta name="date" content="2020-11-02" />
+<meta name="date" content="2020-11-26" />
 
 <title>Dynamic prediction using joint models of longitudinal and time-to-event data</title>
 
@@ -379,7 +379,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Dynamic prediction using joint models of longitudinal and time-to-event data</h1>
 <h4 class="author">Eleni-Rosalina Andrinopoulou, Department of Biostatistics, Erasmus Medical Center</h4>
-<h4 class="date">02 November 2020</h4>
+<h4 class="date">26 November 2020</h4>
 
 </div>
 
@@ -518,10 +518,9 @@ plot(ef, ylab = list(&quot;Logarithmic scale of serum bilirubin&quot;, cex = 1.2
 <div id="further-explanation-for-equation-5" class="section level3">
 <h3>Further explanation for equation (5)</h3>
 <p>The first term of the integrand in (4) can be written as <span class="math display">\[\begin{eqnarray}
-\nonumber\mbox{Pr}(T^*_{l} \geq u \mid  T^*_{l}&gt; t, \tilde{y}_{l}(t);\boldsymbol{\theta})=\\
-&amp;&amp;\nonumber\int \mbox{Pr}(T^*_{l} \geq u\mid T^*_{l}&gt; t, \tilde{y}_{l}(t), \boldsymbol{b}_{l};\boldsymbol{\theta})p(\boldsymbol{b}_{l}\mid  T^*_{l}&gt; t, \tilde{y}_{l}(t);\boldsymbol{\theta})d\boldsymbol{b}_{l}=\\
-&amp;&amp;\nonumber\int \mbox{Pr}(T^*_{l} \geq u\mid T^*_{l}&gt; t, \boldsymbol{b}_{l};\boldsymbol{\theta})p(\boldsymbol{b}_{l}\mid  T^*_{l}&gt; t, \tilde{y}_{l}(t);\boldsymbol{\theta})d\boldsymbol{b}_{l}=\\
-&amp;&amp;\int\frac{S(u \mid \boldsymbol{b}_{l};\boldsymbol{\theta})}{S(t \mid \boldsymbol{b}_{l};\boldsymbol{\theta})}p(\boldsymbol{b}_{l}\mid T^*_{l}&gt; t, \tilde{y}_{l}(t);\boldsymbol{\theta})d\boldsymbol{b}_{l},
+\nonumber\mbox{Pr}(T^*_{l} \geq u \mid  T^*_{l}&gt; t, \tilde{y}_{l}(t);\boldsymbol{\theta})&amp;&amp;=\nonumber\int \mbox{Pr}(T^*_{l} \geq u\mid T^*_{l}&gt; t, \tilde{y}_{l}(t), \boldsymbol{b}_{l};\boldsymbol{\theta})p(\boldsymbol{b}_{l}\mid  T^*_{l}&gt; t, \tilde{y}_{l}(t);\boldsymbol{\theta})d\boldsymbol{b}_{l}\\
+&amp;&amp;=\nonumber\int \mbox{Pr}(T^*_{l} \geq u\mid T^*_{l}&gt; t, \boldsymbol{b}_{l};\boldsymbol{\theta})p(\boldsymbol{b}_{l}\mid  T^*_{l}&gt; t, \tilde{y}_{l}(t);\boldsymbol{\theta})d\boldsymbol{b}_{l}\\
+&amp;&amp;=\int\frac{S(u \mid \boldsymbol{b}_{l};\boldsymbol{\theta})}{S(t \mid \boldsymbol{b}_{l};\boldsymbol{\theta})}p(\boldsymbol{b}_{l}\mid T^*_{l}&gt; t, \tilde{y}_{l}(t);\boldsymbol{\theta})d\boldsymbol{b}_{l},
 \label{Pr1}
 \end{eqnarray}\]</span> where <span class="math inline">\(S(. \mid \boldsymbol{b}_{l};\boldsymbol{\theta})\)</span> denotes the conditional survival function on the random effects of patient <span class="math inline">\(l\)</span>. The simplification from line 2 to line 3 is achieved under the assumption that the longitudinal and the survival outcomes are independent, given the random effects.</p>
 <pre class="r"><code>newdata_5 &lt;- pbc2[pbc2$id == 5, ]
