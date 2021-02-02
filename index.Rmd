@@ -11,10 +11,9 @@ output:
          after_body: footerEA.html
 ---
 
-<span style="color:red; font-weight:bold; font-size:4em;"> Under construction </span>
 
 
-In this webpage, we describe and show the analysis that was performed in the manuscipt: _Dynamic prediction using joint models of longitudinal and time-to-event data_
+In this webpage, we describe and show the analysis that was performed in the manuscipt: _Reflections on modern methods: Dynamic prediction using joint models of longitudinal and time-to-event data_
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, comment = NA, message=FALSE, warning=FALSE)
