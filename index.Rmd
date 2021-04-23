@@ -21,6 +21,8 @@ library(JMbayes)
 library(lattice)
 library(splines)
 library(effects)
+library(rms)
+library(pec)
 ```
 
 # Packages 
@@ -31,7 +33,7 @@ The <code>R</code> packages and versions that are used cen be seen below:
 library(dplyr)
 library(kableExtra)
 library(gifski)
-x <- c("JMbayes", "lattice", "splines", "effects")
+x <- c("JMbayes", "lattice", "splines", "effects", "rms", "pec")
 Rpack <- lapply(x, FUN = function(x) packageVersion(x))
 Rpack <- lapply(Rpack, FUN = function(x) as.character(x))
 names(Rpack) <- x
